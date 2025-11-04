@@ -20,44 +20,47 @@ const [text, setText] = useState("");
   if (!data) return <p>Loading objectives...</p>;
 
   return (
-    <div>
-    <div class="table-container">
-      
-      <h2>Half yearly Objectives</h2>
-      <table border="1" cellPadding="8" style={{ width: "100%", marginBottom: "20px" }}>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>Weight %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.objectives.map(obj => (
-            <tr key={obj.key}>
-              <td>{obj.value}</td>
-              <td>{obj.per}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-       <h2>Annual Objectives</h2>
-    <table border="1" cellPadding="8" style={{ width: "100%", marginBottom: "20px" }}>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>Weight %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.objectives.map(obj => (
-            <tr key={obj.key}>
-              <td>{obj.value}</td>
-              <td>{obj.per}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+  <div>
+    <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
+      <h2 style={{ width: "50%", marginBottom: "20px" }}>Half yearly Objectives</h2>
+      <h2 style={{ width: "50%", marginBottom: "20px" }}>Annual Objectives</h2>
     </div>
+   <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
+     
+      <table border="1" cellPadding="8" style={{ width: "50%", marginBottom: "20px" }}>
+        <thead>
+          <tr>
+            <th>Objective</th>
+            <th>Weight %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.objectives.map(obj => (
+            <tr key={obj.key}>
+              <td>{obj.value}</td>
+              <td>{obj.per}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+       
+    <table border="1" cellPadding="8" style={{ width: "50%", marginBottom: "20px" }}>
+        <thead>
+          <tr>
+            <th>Objective</th>
+            <th>Weight %</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.objectives.map(obj => (
+            <tr key={obj.key}>
+              <td>{obj.value}</td>
+              <td>{obj.per}%</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+   </div>
     <div>
       <h2>Goals</h2>
       <table border="1" cellPadding="8" style={{ width: "100%" }}>

@@ -179,7 +179,7 @@ body, html {
 }
 
   .table-container {
-    flex-direction: column;
+    flex-direction: row;
   }
 
 
