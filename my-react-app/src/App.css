@@ -1,6 +1,18 @@
-.App {
-  text-align: center;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
+
+
+.App {
+  width: 100%;
+  min-height: 100vh;
+  padding: 0 24px; /* ✅ adds even spacing on both sides */
+  background-color: #f7f7f7; /* optional: gives visual boundary */
+  overflow-x: hidden; /* ensures no horizontal scroll */
+}
+
 
 .App-logo {
   height: 40vmin;
@@ -38,18 +50,46 @@
 }
  /* Container styling */
 .container {
-  max-width: 800px;
-  margin: 20px auto;
+  width: 100%;
+  margin: 0;
   padding: 20px;
   background: #f7f7f7;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+
+
+
 h2 {
   text-align: center;
   margin-bottom: 20px;
 }
+
+.assessment-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ✅ ensures all columns stay equal width */
+}
+
+.assessment-table th,
+.assessment-table td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  vertical-align: top;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.assessment-table textarea,
+.assessment-table input {
+  width: 100%;           /* ✅ ensures inputs & textareas fill the column */
+  box-sizing: border-box;
+  border: none;
+  resize: vertical;
+  font-size: 14px;
+}
+
 
 /* Use CSS Grid for two columns */
 .form-grid {
@@ -132,3 +172,16 @@ button.submit-btn:hover {
   font-weight: bold;
 
 }
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* ✅ Prevent horizontal scrolling */
+}
+
+  .table-container {
+    flex-direction: column;
+  }
+
+
+
+

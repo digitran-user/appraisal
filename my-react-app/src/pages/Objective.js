@@ -20,7 +20,9 @@ const [text, setText] = useState("");
   if (!data) return <p>Loading objectives...</p>;
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
+    <div class="table-container">
+      
       <h2>Half yearly Objectives</h2>
       <table border="1" cellPadding="8" style={{ width: "100%", marginBottom: "20px" }}>
         <thead>
@@ -55,6 +57,8 @@ const [text, setText] = useState("");
           ))}
         </tbody>
       </table>
+    </div>
+    <div>
       <h2>Goals</h2>
       <table border="1" cellPadding="8" style={{ width: "100%" }}>
         <thead>
@@ -93,6 +97,7 @@ const [text, setText] = useState("");
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 };

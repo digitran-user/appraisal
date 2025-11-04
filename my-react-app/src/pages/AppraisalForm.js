@@ -4,7 +4,7 @@ import React, {useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import PerformanceRating from "../pages/PerformanceRating";
 import Objective from "../pages/Objective";
-
+import AssessmentTable from "../pages/AssessmentTable";
 function AppraisalForm() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -111,6 +111,7 @@ function AppraisalForm() {
   <>
     <PerformanceRating />
     <Objective />
+    <AssessmentTable/>
   </>
 ) : (
   <p>Loading Employee...</p>
