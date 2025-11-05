@@ -1,20 +1,41 @@
-import React from "react";
-import "../App.css"; // fixed correct import
+import React, { useEffect, useState } from "react";
+import "../App.css";
 
-const AssessmentTable = () => {
-  const areas = [
-    "Target Achievement Consistency",
-    "Processing Time Adherence",
-    "Error Rate in Claims",
-    "Performance During Peak Periods",
-    "Training Participation and Skill Development",
-    "Adherence to Compliance",
-    "Team Collaboration",
-  ];
+const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
+  const [areas, setAreas] = useState([]);
+
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/objectives/${grade}`);
+        const data = await response.json();
+        if (data && data.aoas) {
+          setAreas(data.aoas.map(item => item.value));
+        } else {
+          setAreas([]);
+        }
+      } catch (error) {
+        console.error("Error fetching AOAs:", error);
+      }
+    };
+
+    if (grade) fetchAreas();
+  }, [grade]);
+
+  const handleChange = (index, field, value, type) => {
+    setAppraisal(prev => {
+      const updated = { ...prev };
+      if (!updated[type]) updated[type] = [];
+      updated[type][index] = {
+        ...(updated[type][index] || {}),
+        [field]: value
+      };
+      return updated;
+    });
+  };
 
   return (
     <div className="assessment-table">
-      {/* ===== Employee Assessment Table ===== */}
       <h2>Employee Self Assessment</h2>
       <table>
         <thead>
@@ -31,11 +52,26 @@ const AssessmentTable = () => {
           {areas.map((area, index) => (
             <tr key={index}>
               <td>{area}</td>
-              <td><textarea /></td>
-              <td><textarea /></td>
-              <td><textarea /></td>
-              <td><textarea /></td>
-              <td><textarea /></td>
+              <td><textarea disabled={isManager}
+                value={appraisal.self?.[index]?.assessment || ""}
+                onChange={e => handleChange(index, "assessment", e.target.value, "self")}
+              /></td>
+              <td><textarea disabled={isManager}
+                value={appraisal.self?.[index]?.performance || ""}
+                onChange={e => handleChange(index, "performance", e.target.value, "self")}
+              /></td>
+              <td><textarea disabled={isManager}
+                value={appraisal.self?.[index]?.achievements || ""}
+                onChange={e => handleChange(index, "achievements", e.target.value, "self")}
+              /></td>
+              <td><textarea disabled={isManager}
+                value={appraisal.self?.[index]?.developments || ""}
+                onChange={e => handleChange(index, "developments", e.target.value, "self")}
+              /></td>
+              <td><textarea disabled={isManager}
+                value={appraisal.self?.[index]?.training || ""}
+                onChange={e => handleChange(index, "training", e.target.value, "self")}
+              /></td>
             </tr>
           ))}
         </tbody>
@@ -43,7 +79,6 @@ const AssessmentTable = () => {
 
       <div className="line"></div>
 
-      {/* ===== Manager's Comments Table ===== */}
       <h2>Manager’s Comments</h2>
       <table>
         <thead>
@@ -60,11 +95,26 @@ const AssessmentTable = () => {
           {areas.map((area, index) => (
             <tr key={index}>
               <td>{area}</td>
-              <td><textarea /></td>
-              <td><textarea/></td>
-              <td><textarea /></td>
-              <td><textarea /></td>
-              <td><textarea /></td>
+              <td><textarea disabled={!isManager}
+                value={appraisal.manager?.[index]?.assessment || ""}
+                onChange={e => handleChange(index, "assessment", e.target.value, "manager")}
+              /></td>
+              <td><textarea disabled={!isManager}
+                value={appraisal.manager?.[index]?.performance || ""}
+                onChange={e => handleChange(index, "performance", e.target.value, "manager")}
+              /></td>
+              <td><textarea disabled={!isManager}
+                value={appraisal.manager?.[index]?.achievements || ""}
+                onChange={e => handleChange(index, "achievements", e.target.value, "manager")}
+              /></td>
+              <td><textarea disabled={!isManager}
+                value={appraisal.manager?.[index]?.developments || ""}
+                onChange={e => handleChange(index, "developments", e.target.value, "manager")}
+              /></td>
+              <td><textarea disabled={!isManager}
+                value={appraisal.manager?.[index]?.training || ""}
+                onChange={e => handleChange(index, "training", e.target.value, "manager")}
+              /></td>
             </tr>
           ))}
         </tbody>

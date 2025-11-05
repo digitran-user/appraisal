@@ -39,7 +39,7 @@ const styles = {
      const data = await res.json();
      localStorage.setItem("employees", JSON.stringify(data));
       if (res.status===404) {
-      navigate(`/appraisal?q=${password}`); // route after login
+      navigate(`/appraisal?q=${password}&z=self`); // route after login
     } else {
       navigate(`/reportee?id=${password}`);
     }

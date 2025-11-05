@@ -17,7 +17,7 @@ const ReporteeList = () => {
 
   // ✅ Navigate to appraisal page
   const handleNavigate = (emp) => {
-    navigate(`/appraisal?q=${emp.empID}`);
+    navigate(`/appraisal?q=${emp.empID}&z=manager`);
   };
 
   return (
@@ -59,7 +59,7 @@ const ReporteeList = () => {
 
       <br/>
       <h2>
-      <button className="submit-btn" onClick={() => navigate(`/appraisal?q=${selfID}`)}>
+      <button className="submit-btn" onClick={() => navigate(`/appraisal?q=${selfID}&z=self`)}>
         Self Appraisal
       </button></h2>
     </div>

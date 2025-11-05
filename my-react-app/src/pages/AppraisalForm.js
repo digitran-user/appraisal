@@ -7,9 +7,12 @@ import AssessmentTable from "../pages/AssessmentTable";
 function AppraisalForm() {
   const location = useLocation();
 
+  const [appraisal, setAppraisal] = useState({});
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
   const [gradeGoals, setGradeGoals] = useState([]);
+  const [isManager, setIsManager] = useState(true);
+
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
     try {
@@ -19,7 +22,6 @@ function AppraisalForm() {
 
       // ✅ Fetch objectives using employee.grade
       fetchObjectives(data.grade);
-
     } catch (err) {
       console.error("Error fetching employee:", err);
     }
@@ -30,9 +32,7 @@ function AppraisalForm() {
     try {
       const res = await fetch(`http://localhost:5000/api/objectives/${grade}`);
       const objData = await res.json();
-
       setGradeObjectives(objData?.objectives || []);
-      
       setGradeGoals(objData?.goals || []);
     } catch (err) {
       console.error("Error fetching objectives:", err);
@@ -43,12 +43,42 @@ function AppraisalForm() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const empId = queryParams.get("q");
-    fetchEmployee(empId);
+    const viewer = queryParams.get("z");
+
+    setIsManager(viewer !== "self"); // if z=self → employee view
+
+    if (empId) {
+      fetchEmployee(empId);
+    }
   }, []);
 
-  const handleSubmit = (e) => {
+  // ✅ Handles general form-level changes (if any)
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setAppraisal((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ✅ Submit entire appraisal
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Appraisal submitted!");
+
+    if (!employee) {
+      alert("Employee data not loaded yet!");
+      return;
+    }
+
+    const finalData = {
+      employeeId: employee.empID,
+      employeeName: employee.empName,
+      grade: employee.grade,
+      department: employee.department,
+      designation: employee.designation,
+      appraisalData: appraisal,
+      submittedBy: isManager ? "manager" : "employee",
+      submittedAt: new Date(),
+    };
+
+    alert(JSON.stringify(finalData));
   };
 
   return (
@@ -76,16 +106,39 @@ function AppraisalForm() {
           <div className="line" />
           <div className="spacer" />
 
-          {/* ✅ DYNAMIC COMPONENTS */}
-          <PerformanceRating />
-          <Objective objectives={gradeObjectives} grade={employee.grade} goals={gradeGoals}/>
-          <AssessmentTable />
+          {/* ✅ MAIN APPRAISAL FORM */}
+          <form onSubmit={handleSubmit}>
+            <PerformanceRating
+              appraisal={appraisal}
+              setAppraisal={setAppraisal}
+              isManager={isManager}
+            />
 
-          <form onSubmit={handleSubmit} className="form-grid">
+            <Objective
+              objectives={gradeObjectives}
+              grade={employee.grade}
+              goals={gradeGoals}
+              isManager={isManager}
+              appraisal={appraisal}
+              setAppraisal={setAppraisal}
+            />
+
+            <AssessmentTable
+              grade={employee.grade}
+              isManager={isManager}
+              appraisal={appraisal}
+              setAppraisal={setAppraisal}
+            />
+
             <div className="form-group full-width">
-              <button type="submit" className="submit-btn">Submit Appraisal</button>
+              <button type="submit" className="submit-btn">
+                Submit Appraisal
+              </button>
             </div>
           </form>
+
+          {/* For Debugging */}
+          <pre>{JSON.stringify(appraisal, null, 2)}</pre>
         </>
       )}
     </div>
