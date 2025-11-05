@@ -9,7 +9,7 @@ function AppraisalForm() {
 
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
-
+  const [gradeGoals, setGradeGoals] = useState([]);
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
     try {
@@ -19,6 +19,7 @@ function AppraisalForm() {
 
       // ✅ Fetch objectives using employee.grade
       fetchObjectives(data.grade);
+
     } catch (err) {
       console.error("Error fetching employee:", err);
     }
@@ -31,6 +32,8 @@ function AppraisalForm() {
       const objData = await res.json();
 
       setGradeObjectives(objData?.objectives || []);
+      
+      setGradeGoals(objData?.goals || []);
     } catch (err) {
       console.error("Error fetching objectives:", err);
     }
@@ -75,7 +78,7 @@ function AppraisalForm() {
 
           {/* ✅ DYNAMIC COMPONENTS */}
           <PerformanceRating />
-          <Objective objectives={gradeObjectives} grade={employee.grade} />
+          <Objective objectives={gradeObjectives} grade={employee.grade} goals={gradeGoals}/>
           <AssessmentTable />
 
           <form onSubmit={handleSubmit} className="form-grid">
