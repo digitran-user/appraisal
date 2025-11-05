@@ -1,108 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const Objective = () => {
-  const [data, setData] = useState(null);
-const [text, setText] = useState("");
-  const fetchObjective = async () => {
-    try {
-      const res = await fetch(`http://localhost:5000/api/objectives/PE`);
-      const json = await res.json();
-      setData(json);
-    } catch (err) {
-      console.error("Error fetching objective:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchObjective();
-  }, []);
-
-  if (!data) return <p>Loading objectives...</p>;
-
+function Objective({ objectives = [], grade }) {
   return (
-  <div>
-    <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
-      <h2 style={{ width: "50%", marginBottom: "20px" }}>Half yearly Objectives</h2>
-      <h2 style={{ width: "50%", marginBottom: "20px" }}>Annual Objectives</h2>
-    </div>
-   <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
-     
-      <table border="1" cellPadding="8" style={{ width: "50%", marginBottom: "20px" }}>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>Weight %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.objectives.map(obj => (
-            <tr key={obj.key}>
-              <td>{obj.value}</td>
-              <td>{obj.per}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-       
-    <table border="1" cellPadding="8" style={{ width: "50%", marginBottom: "20px" }}>
-        <thead>
-          <tr>
-            <th>Objective</th>
-            <th>Weight %</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.objectives.map(obj => (
-            <tr key={obj.key}>
-              <td>{obj.value}</td>
-              <td>{obj.per}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-   </div>
     <div>
-      <h2>Goals</h2>
-      <table border="1" cellPadding="8" style={{ width: "100%" }}>
-        <thead>
-          <tr>
-            <th>Goal</th>
-            <th>Weight %</th>
-            <th>self rating</th>
-            <th>manager rating</th>
-            <th>management rating</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.goals.map(goal => (
-            <tr key={goal.key}>
-              <td>{goal.value}</td>
-              <td>{goal.per}%</td>
-              <td> <input 
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)} 
-        placeholder="Enter text"
-      /></td>
-              <td> <input 
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)} 
-        placeholder="Enter text"
-      /></td>
-            <td> <input 
-        type="text"
-        value={text}
-        onChange={(e) => setText(e.target.value)} 
-        placeholder="Enter text"
-      /></td>
+      <h3>Objectives for Grade {grade}</h3>
+
+      {objectives.length === 0 ? (
+        <p>No objectives found for this grade.</p>
+      ) : (
+        <table className="objective-table">
+          <thead>
+            <tr>
+              <th>Objective</th>
+              <th>Weight (%)</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {objectives.map((obj, index) => (
+              <tr key={index}>
+                <td>{obj.value}</td>
+                <td>{obj.per}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
-};
+}
 
 export default Objective;

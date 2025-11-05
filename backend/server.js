@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const Employee = require("./models/Employee");
 const Objective = require("./models/Objective");
+const objectiveRoutes = require("./routes/objectiveRoutes");
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,10 @@ mongoose.connect("mongodb://127.0.0.1:27017/empDetails", {
 })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log(err));
+
+ // import objectiveRoutes from "./routes/objectiveRoutes.js";
+app.use("/api/objectives", objectiveRoutes);
+
 
 // ✅ API to get all employee data
 app.get("/api/emp/:empId", async (req, res) => {
