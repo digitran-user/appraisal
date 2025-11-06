@@ -36,7 +36,7 @@ console.log(empId);
 
     res.json(employee);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Employee not found" });
   }
 });
 

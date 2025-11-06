@@ -2,18 +2,36 @@ import React, { useState } from "react";
 
 function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
   // ✅ Update values inside `appraisal` dynamically
-  const handleChange = (index, field, value, type) => {
+  // const handleChange = (index, field, value, type) => {
+  //   console.log(value);
+  //   setAppraisal((prev) => {
+  //     const updated = { ...prev };
+  //     if (!updated[type]) updated[type] = []; // create section if missing
+  //     updated[type][index] = {
+  //       ...(updated[type][index] || {}),
+  //       [field]: value,
+  //     };
+  //     return updated;
+  //   });
+  // };
+
+  const handleChange = (index, key, value, type) => {
     setAppraisal((prev) => {
-      const updated = { ...prev };
-      if (!updated[type]) updated[type] = []; // create section if missing
-      updated[type][index] = {
-        ...(updated[type][index] || {}),
-        [field]: value,
+      // clone the array safely
+      const updatedGoals = [...(prev[type] || [])];
+      updatedGoals[index] = {
+        ...(updatedGoals[index] || {}),
+        key,           // keep the goal key
+        rating: value, // update only the rating
       };
-      return updated;
+
+      // return a fresh updated object
+      return {
+        ...prev,
+        [type]: updatedGoals,
+      };
     });
   };
-
   return (
     <div>
       {objectives.length === 0 ? (
@@ -88,6 +106,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
                 <td>
                   <input
                     type="text"
+                    name={goal.key}
                     value={appraisal.selfGoals?.[index]?.rating || ""}
                     onChange={(e) => handleChange(index, goal.key, e.target.value, "selfGoals")}
                     placeholder="Enter self rating"
