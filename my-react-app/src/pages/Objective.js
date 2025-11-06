@@ -1,37 +1,21 @@
 import React, { useState } from "react";
 
 function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
-  // ✅ Update values inside `appraisal` dynamically
-  // const handleChange = (index, field, value, type) => {
-  //   console.log(value);
-  //   setAppraisal((prev) => {
-  //     const updated = { ...prev };
-  //     if (!updated[type]) updated[type] = []; // create section if missing
-  //     updated[type][index] = {
-  //       ...(updated[type][index] || {}),
-  //       [field]: value,
-  //     };
-  //     return updated;
-  //   });
-  // };
-
   const handleChange = (index, key, value, type) => {
     setAppraisal((prev) => {
-      // clone the array safely
       const updatedGoals = [...(prev[type] || [])];
       updatedGoals[index] = {
         ...(updatedGoals[index] || {}),
-        key,           // keep the goal key
-        rating: value, // update only the rating
+        key,
+        rating: value,
       };
-
-      // return a fresh updated object
       return {
         ...prev,
         [type]: updatedGoals,
       };
     });
   };
+
   return (
     <div>
       {objectives.length === 0 ? (
@@ -43,9 +27,9 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             <h2 style={{ width: "50%" }}>Annual Objectives</h2>
           </div>
 
-          <div style={{ display: "flex",  }} className="assessment-table">
+          <div style={{ display: "flex" }} className="assessment-table">
             {/* Half-Yearly */}
-            <table style={{ width: "50%" }} >
+            <table style={{ width: "50%" }}>
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -63,7 +47,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             </table>
 
             {/* Annual */}
-            <table  style={{ width: "50%" }}>
+            <table style={{ width: "50%" }}>
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -86,7 +70,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
       {/* Goals section */}
       <div style={{ marginTop: "40px" }} className="assessment-table">
         <h2>Goals</h2>
-        <table  style={{ width: "100%" }}>
+        <table style={{ width: "100%" }}>
           <thead>
             <tr>
               <th>Goal</th>
@@ -103,38 +87,63 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
                 <td>{goal.per}%</td>
 
                 {/* ✅ Self rating */}
-                <td>
-                  <input
-                    type="text"
-                    name={goal.key}
-                    value={appraisal.selfGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index, goal.key, e.target.value, "selfGoals")}
-                    placeholder="Enter self rating"
-                    disabled={isManager}
-                  />
-                </td>
+<td>
+  <input
+    type="number"
+    name={goal.key}
+    min="0"
+    max={goal.per} // dynamic max per goal
+    value={appraisal.selfGoals?.[index]?.rating || ""}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+        handleChange(index, goal.key, val, "selfGoals");
+      }
+    }}
+    placeholder="Enter self rating"
+    disabled={isManager}
+    required
+  />
+</td>
 
-                {/* ✅ Manager rating */}
-                <td>
-                  <input
-                    type="text"
-                    value={appraisal.managerGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managerGoals")}
-                    placeholder="Enter manager rating"
-                    disabled={!isManager}
-                  />
-                </td>
+{/* ✅ Manager rating */}
+<td>
+  <input
+    type="number"
+    min="0"
+    max={goal.per}
+    value={appraisal.managerGoals?.[index]?.rating || ""}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+        handleChange(index, goal.key, val, "managerGoals");
+      }
+    }}
+    placeholder="Enter manager rating"
+    disabled={!isManager}
+    required
+  />
+</td>
 
-                {/* ✅ Management rating */}
-                <td>
-                  <input
-                    type="text"
-                    value={appraisal.managementGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managementGoals")}
-                    placeholder="Enter management rating"
-                    disabled={!isManager}
-                  />
-                </td>
+{/* ✅ Management rating */}
+<td>
+  <input
+    type="number"
+    min="0"
+    max={goal.per}
+    value={appraisal.managementGoals?.[index]?.rating || ""}
+    onChange={(e) => {
+      const val = e.target.value;
+      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+        handleChange(index, goal.key, val, "managementGoals");
+      }
+    }}
+     placeholder="Enter management rating"
+    disabled={!isManager}
+    required
+  />
+</td>
+
               </tr>
             ))}
           </tbody>

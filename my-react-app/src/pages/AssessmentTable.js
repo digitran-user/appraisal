@@ -52,23 +52,23 @@ const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
           {areas.map((area, index) => (
             <tr key={index}>
               <td>{area}</td>
-              <td><textarea disabled={isManager}
+              <td><textarea required disabled={isManager}
                 value={appraisal.self?.[index]?.assessment || ""}
                 onChange={e => handleChange(index, "assessment", e.target.value, "self")}
               /></td>
-              <td><textarea disabled={isManager}
+              <td><textarea required disabled={isManager}
                 value={appraisal.self?.[index]?.performance || ""}
                 onChange={e => handleChange(index, "performance", e.target.value, "self")}
               /></td>
-              <td><textarea disabled={isManager}
+              <td><textarea required disabled={isManager}
                 value={appraisal.self?.[index]?.achievements || ""}
                 onChange={e => handleChange(index, "achievements", e.target.value, "self")}
               /></td>
-              <td><textarea disabled={isManager}
+              <td><textarea required disabled={isManager}
                 value={appraisal.self?.[index]?.developments || ""}
                 onChange={e => handleChange(index, "developments", e.target.value, "self")}
               /></td>
-              <td><textarea disabled={isManager}
+              <td><textarea required disabled={isManager}
                 value={appraisal.self?.[index]?.training || ""}
                 onChange={e => handleChange(index, "training", e.target.value, "self")}
               /></td>
@@ -95,23 +95,23 @@ const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
           {areas.map((area, index) => (
             <tr key={index}>
               <td>{area}</td>
-              <td><textarea disabled={!isManager}
+              <td><textarea required disabled={!isManager}
                 value={appraisal.manager?.[index]?.assessment || ""}
                 onChange={e => handleChange(index, "assessment", e.target.value, "manager")}
               /></td>
-              <td><textarea disabled={!isManager}
+              <td><textarea required disabled={!isManager}
                 value={appraisal.manager?.[index]?.performance || ""}
                 onChange={e => handleChange(index, "performance", e.target.value, "manager")}
               /></td>
-              <td><textarea disabled={!isManager}
+              <td><textarea required disabled={!isManager}
                 value={appraisal.manager?.[index]?.achievements || ""}
                 onChange={e => handleChange(index, "achievements", e.target.value, "manager")}
               /></td>
-              <td><textarea disabled={!isManager}
+              <td><textarea required disabled={!isManager}
                 value={appraisal.manager?.[index]?.developments || ""}
                 onChange={e => handleChange(index, "developments", e.target.value, "manager")}
               /></td>
-              <td><textarea disabled={!isManager}
+              <td><textarea required disabled={!isManager}
                 value={appraisal.manager?.[index]?.training || ""}
                 onChange={e => handleChange(index, "training", e.target.value, "manager")}
               /></td>
