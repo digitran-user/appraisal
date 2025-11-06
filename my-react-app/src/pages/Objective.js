@@ -1,17 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 
-function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
-  // ✅ Update values inside `appraisal` dynamically
-  const handleChange = (index, field, value, type) => {
-    setAppraisal((prev) => {
-      const updated = { ...prev };
-      if (!updated[type]) updated[type] = []; // create section if missing
-      updated[type][index] = {
-        ...(updated[type][index] || {}),
-        [field]: value,
-      };
-      return updated;
-    });
+function Objective({ objectives = [], grade, isManager, goals = [], appraisal, setAppraisal }) {
+
+  const handleChange = (e, goalKey, type) => {
+    const { value } = e.target;
+    setAppraisal((prev) => ({
+      ...prev,
+      [type]: {
+        ...prev[type],
+        [goalKey]: value,
+      },
+    }));
   };
 
   return (
@@ -21,13 +20,11 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
       ) : (
         <div>
           <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
-            <h2 style={{ width: "50%" }}>Half-Yearly Objectives</h2>
+            <h2 style={{ width: "50%" }}>Half Yearly Objectives</h2>
             <h2 style={{ width: "50%" }}>Annual Objectives</h2>
           </div>
-
-          <div style={{ display: "flex",  }} className="assessment-table">
-            {/* Half-Yearly */}
-            <table style={{ width: "50%" }} >
+          <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
+            <table border="1" cellPadding="8" style={{ width: "50%" }}>
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -44,8 +41,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
               </tbody>
             </table>
 
-            {/* Annual */}
-            <table  style={{ width: "50%" }}>
+            <table border="1" cellPadding="8" style={{ width: "50%" }}>
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -65,10 +61,9 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
         </div>
       )}
 
-      {/* Goals section */}
-      <div style={{ marginTop: "40px" }} className="assessment-table">
+      <div>
         <h2>Goals</h2>
-        <table  style={{ width: "100%" }}>
+        <table border="1" cellPadding="8" style={{ width: "100%" }}>
           <thead>
             <tr>
               <th>Goal</th>
@@ -79,40 +74,43 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             </tr>
           </thead>
           <tbody>
-            {goals.map((goal, index) => (
+            {goals.map((goal) => (
               <tr key={goal.key}>
                 <td>{goal.value}</td>
                 <td>{goal.per}%</td>
 
-                {/* ✅ Self rating */}
+                {/* Self rating */}
                 <td>
                   <input
                     type="text"
-                    value={appraisal.selfGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index, goal.key, e.target.value, "selfGoals")}
+                    name={`self_${goal.key}`}
                     placeholder="Enter self rating"
+                    value={appraisal?.selfGoals?.[goal.key] || ""}
+                    onChange={(e) => handleChange(e, goal.key, "selfGoals")}
                     disabled={isManager}
                   />
                 </td>
 
-                {/* ✅ Manager rating */}
+                {/* Manager rating */}
                 <td>
                   <input
                     type="text"
-                    value={appraisal.managerGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managerGoals")}
+                    name={`manager_${goal.key}`}
                     placeholder="Enter manager rating"
+                    value={appraisal?.managerGoals?.[goal.key] || ""}
+                    onChange={(e) => handleChange(e, goal.key, "managerGoals")}
                     disabled={!isManager}
                   />
                 </td>
 
-                {/* ✅ Management rating */}
+                {/* Management rating */}
                 <td>
                   <input
                     type="text"
-                    value={appraisal.managementGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managementGoals")}
+                    name={`mgmt_${goal.key}`}
                     placeholder="Enter management rating"
+                    value={appraisal?.managementGoals?.[goal.key] || ""}
+                    onChange={(e) => handleChange(e, goal.key, "managementGoals")}
                     disabled={!isManager}
                   />
                 </td>
