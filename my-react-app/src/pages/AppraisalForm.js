@@ -100,7 +100,11 @@ function AppraisalForm() {
             <div className="form-group"><label>Location:</label><label>{employee.location}</label></div>
             <div className="form-group"><label>Service Period:</label><label>{employee.servicePeriod}</label></div>
             <div className="form-group"><label>Assessment Period:</label><label>{employee.assPeriod}</label></div>
-            <div className="form-group"><label>Manager/Lead:</label><label>{employee.reportsTo}</label></div>
+            <div className="form-group"><label>Assessment Cycle:</label><label>{employee.assessmentCycle}</label></div>
+             <div className="form-group"><label>Assessment Type:</label><label>{employee.assessmentType}</label></div>
+            <div className="form-group"><label>Manager/Appraiser:</label><label>{employee.reportsTo}</label></div>
+             <div className="form-group"><label>Management/Appraiser:</label><label>{employee.management}</label></div>
+
           </form>
 
           <div className="line" />

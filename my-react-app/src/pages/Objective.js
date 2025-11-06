@@ -25,9 +25,9 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             <h2 style={{ width: "50%" }}>Annual Objectives</h2>
           </div>
 
-          <div style={{ display: "flex", gap: "20px" }}>
+          <div style={{ display: "flex",  }} className="assessment-table">
             {/* Half-Yearly */}
-            <table border="1" cellPadding="8" style={{ width: "50%" }}>
+            <table style={{ width: "50%" }} >
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -45,7 +45,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             </table>
 
             {/* Annual */}
-            <table border="1" cellPadding="8" style={{ width: "50%" }}>
+            <table  style={{ width: "50%" }}>
               <thead>
                 <tr>
                   <th>Objective</th>
@@ -66,9 +66,9 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
       )}
 
       {/* Goals section */}
-      <div style={{ marginTop: "40px" }}>
+      <div style={{ marginTop: "40px" }} className="assessment-table">
         <h2>Goals</h2>
-        <table border="1" cellPadding="8" style={{ width: "100%" }}>
+        <table  style={{ width: "100%" }}>
           <thead>
             <tr>
               <th>Goal</th>
@@ -89,7 +89,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
                   <input
                     type="text"
                     value={appraisal.selfGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index, "rating", e.target.value, "selfGoals")}
+                    onChange={(e) => handleChange(index, goal.key, e.target.value, "selfGoals")}
                     placeholder="Enter self rating"
                     disabled={isManager}
                   />
@@ -100,7 +100,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
                   <input
                     type="text"
                     value={appraisal.managerGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index, "rating", e.target.value, "managerGoals")}
+                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managerGoals")}
                     placeholder="Enter manager rating"
                     disabled={!isManager}
                   />
@@ -111,7 +111,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
                   <input
                     type="text"
                     value={appraisal.managementGoals?.[index]?.rating || ""}
-                    onChange={(e) => handleChange(index, "rating", e.target.value, "managementGoals")}
+                    onChange={(e) => handleChange(index,  goal.key, e.target.value, "managementGoals")}
                     placeholder="Enter management rating"
                     disabled={!isManager}
                   />
