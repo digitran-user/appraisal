@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
-  const handleChange = (index, key, value, type) => {
+ const handleChange = (index, key, value, type) => {
     setAppraisal((prev) => {
       const updatedGoals = [...(prev[type] || [])];
       updatedGoals[index] = {
@@ -93,7 +93,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
   </td>       
     <td>
   <input/>
-  </td>
+  </td> 
                 {/* ✅ Self rating */}
 <td>
   <input
@@ -101,12 +101,14 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     name={goal.key}
     min="0"
     max={goal.per} // dynamic max per goal
-    value={appraisal.selfGoals?.[index]?.rating || ""}
+    value={
+  appraisal.selfGoals?.find((g) => g.key === goal.key)?.rating || ""
+}
     onChange={(e) => {
       const val = e.target.value;
-      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+    //  if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
         handleChange(index, goal.key, val, "selfGoals");
-      }
+   //   }
     }}
     placeholder="Enter self rating"
     disabled={isManager}
@@ -120,12 +122,13 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     type="number"
     min="0"
     max={goal.per}
-    value={appraisal.managerGoals?.[index]?.rating || ""}
+    name={goal.key}
+    value={appraisal.managerGoals?.find((g) => g.key === goal.key)?.rating || ""}
     onChange={(e) => {
       const val = e.target.value;
-      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+     // if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
         handleChange(index, goal.key, val, "managerGoals");
-      }
+     // }
     }}
     placeholder="Enter manager rating"
     disabled={!isManager}
@@ -139,12 +142,13 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     type="number"
     min="0"
     max={goal.per}
-    value={appraisal.managementGoals?.[index]?.rating || ""}
+    name={goal.key}
+    value={appraisal.managementGoals?.find((g) => g.key === goal.key)?.rating || ""}
     onChange={(e) => {
       const val = e.target.value;
-      if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
+     // if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
         handleChange(index, goal.key, val, "managementGoals");
-      }
+     // }
     }}
      placeholder="Enter management rating"
     disabled={!isManager}
@@ -156,8 +160,21 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
   </td>       
     
 
-              </tr>
-            ))}
+              </tr> 
+            ))} 
+            <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><input placeholder="Overall Rating"></input></td>
+            <td><input placeholder="Overall Rating"></input></td>
+            <td><input placeholder="Overall Rating"></input></td>
+            <td></td>
+            
+
+
+            </tr>
           </tbody>
         </table>
       </div>

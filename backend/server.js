@@ -62,26 +62,24 @@ app.get("/api/reportees/:empId", async (req, res) => {
 app.put("/api/appraisals/:empId", async (req, res) => {
   try {
     const { empId } = req.params;
-  
-    const updates = req.body; // dynamic fields sent from frontend
-
-    // Find the employee by empId and update only given fields
+    const { appraisal } = req.body;
+    console.log("JIgyasa");
+    console.log(req.body);
     const updatedEmployee = await Employee.findOneAndUpdate(
       { empID: empId },
-      { $set: updates },  // ✅ only updates provided fields
-      { new: true }       // return the updated document
+      { $set: req.body },
+      { new: true }
     );
-    console.log(updatedEmployee);
-    if (!updatedEmployee) {
+
+    if (!updatedEmployee)
       return res.status(404).json({ message: "Employee not found" });
-    }
 
     res.json({
-      message: "Employee updated successfully",
+      message: "✅ Appraisal updated successfully",
       employee: updatedEmployee,
     });
   } catch (error) {
-    console.error("❌ Error updating employee:", error);
+    console.error("❌ Error updating appraisal:", error);
     res.status(500).json({ error: "Server error" });
   }
 
