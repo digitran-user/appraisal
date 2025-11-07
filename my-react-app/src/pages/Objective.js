@@ -1,22 +1,48 @@
 import React, { useState } from "react";
 
 function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
- const handleChange = (index, key, value, type) => {
-    setAppraisal((prev) => {
-      const updatedGoals = [...(prev[type] || [])];
-      updatedGoals[index] = {
-        ...(updatedGoals[index] || {}),
-        key,
-        rating: value,
-      };
-      return {
-        ...prev,
-        [type]: updatedGoals,
-      };
-    });
-  };
+ const handleChange = (index, key, value, type, field = "rating") => {
+  setAppraisal((prev) => {
+    const updatedGoals = [...(prev[type] || [])];
+    updatedGoals[index] = {
+      ...(updatedGoals[index] || {}),
+      key,
+      [field]: value, // dynamically update rating, achievement, or prevCycle
+    };
+    return {
+      ...prev,
+      [type]: updatedGoals,
+    };
+  });
+};
+
+
+
+//calculate average rating
+const calculateAverage = (goals = []) => {
+  if (!goals?.length) return 0;
+
+  let totalWeighted = 0;
+  let totalCount = 0;
+
+  goals.forEach((goal) => {
+    const achievement = Number(goal.achievement) || 0;
+    const rating = Number(goal.rating) || 0;
+    totalWeighted += achievement * rating;
+    totalCount++;
+  });
+
+  return totalCount ? (totalWeighted / totalCount).toFixed(2) : 0;
+};
+
+const selfAverage = calculateAverage(appraisal.selfGoals);
+const managerAverage = calculateAverage(appraisal.managerGoals);
+const managementAverage = calculateAverage(appraisal.managementGoals);
+
+ 
 
   return (
+    
     <div>
       {objectives.length === 0 ? (
         <p>No objectives found for this grade.</p>
@@ -26,6 +52,8 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             <h2 style={{ width: "50%" }}>Half-Yearly Objectives</h2>
             <h2 style={{ width: "50%" }}>Annual Objectives</h2>
           </div>
+
+          
 
           <div style={{ display: "flex" }} className="assessment-table">
             {/* Half-Yearly */}
@@ -88,13 +116,45 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
               <tr key={goal.key}>
                 <td>{goal.value}</td>
                 <td>{goal.per}%</td>
-            <td>
-  <input/>
-  </td>       
-    <td>
-  <input/>
-  </td> 
-                {/* ✅ Self rating */}
+            {/* ✅ Achievements % */}
+<td>
+  <input
+    type="number"
+    name={`ach_${goal.key}`}
+    min="0"
+    max="100"
+    value={
+      appraisal.selfGoals?.find((g) => g.key === goal.key)?.achievement || ""
+    }
+    onChange={(e) =>
+      handleChange(index, goal.key, e.target.value, "selfGoals", "achievement")
+    }
+    placeholder="Enter achievement %"
+    disabled={isManager}
+    required
+  />
+</td>
+
+{/* ✅ Previous Cycle Rating */}
+<td>
+  <input
+    type="number"
+    name={`prev_${goal.key}`}
+    min="0"
+    max="100"
+    value={
+      appraisal.selfGoals?.find((g) => g.key === goal.key)?.previousCycle || ""
+    }
+    onChange={(e) =>
+      handleChange(index, goal.key, e.target.value, "selfGoals", "previousCycle")
+    }
+    placeholder="Enter previous cycle rating"
+    disabled={isManager}
+  />
+</td>
+
+  
+{/* ✅ Self rating */}
 <td>
   <input
     type="number"
@@ -115,6 +175,7 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     required
   />
 </td>
+
 
 {/* ✅ Manager rating */}
 <td>
@@ -167,9 +228,27 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
             <td></td>
             <td></td>
             <td></td>
-            <td><input placeholder="Overall Rating"></input></td>
-            <td><input placeholder="Overall Rating"></input></td>
-            <td><input placeholder="Overall Rating"></input></td>
+            <td>
+  <input
+    placeholder="Overall Rating"
+    value={selfAverage}
+    readOnly
+  />
+</td>
+<td>
+  <input
+    placeholder="Overall Rating"
+    value={managerAverage}
+    readOnly
+  />
+</td>
+<td>
+  <input
+    placeholder="Overall Rating"
+    value={managementAverage}
+    readOnly
+  />
+</td>
             <td></td>
             
 

@@ -151,7 +151,7 @@ function AppraisalForm() {
             <AssessmentTable
               grade={employee.grade}
               isManager={isManager}
-              appraisal={employee.appraisal}
+              appraisal={appraisal}
               setAppraisal={setAppraisal}
             />
 

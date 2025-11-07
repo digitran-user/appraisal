@@ -16,7 +16,11 @@ const appraisalSectionSchema = new mongoose.Schema(
 const goalSchema = new mongoose.Schema(
   {
     key: { type: String, required: true },
-    rating: { type: Number, default: null },
+  //value: { type: String, default: "" }, // Goal name
+  //per: { type: Number, default: 0 },    // Weight %
+  achievement: { type: Number, default: null },
+  previousCycleRating: { type: Number, default: null },
+  rating: { type: Number, default: null },
   },
   { _id: false }
 );

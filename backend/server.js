@@ -62,12 +62,42 @@ app.get("/api/reportees/:empId", async (req, res) => {
 app.put("/api/appraisals/:empId", async (req, res) => {
   try {
     const { empId } = req.params;
-    const { appraisal } = req.body;
+    const { finalData } = req.body;
+
     console.log("JIgyasa");
     console.log(req.body);
+     
+    console.log("🧹 Cleaning appraisal data for:", empId);
+
+    // ✅ Clean and normalize selfGoals
+    //const cleanedSelfGoals = (finalData?.appraisalData?.selfGoals || []).map(
+ // ({ key, achievement, previousCycle, rating }) => ({
+    //key,
+    //achievement: Number(achievement) || 0,
+    //previousCycleRating: Number(previousCycle) || 0, // 👈 map correctly
+    //rating: Number(rating) || 0,
+ // })
+//);
+
+    // ✅ Clean and normalize self assessment entries
+    //const cleanedSelf = (finalData?.appraisalData?.self || []).map((entry) => ({
+    //  assessment: entry.assessment ?? "",
+     // performance: entry.performance ?? "",
+     // achievements: entry.achievements ?? "",
+      //developments: entry.developments ?? "",
+      //training: entry.training ?? "",
+    //}));
+
+
     const updatedEmployee = await Employee.findOneAndUpdate(
       { empID: empId },
-      { $set: req.body },
+      {
+        $set: {
+          appraisal: finalData.appraisalData, // ✅ map correctly
+          submittedBy: finalData.submittedBy,
+          submittedAt: finalData.submittedAt,
+        },
+      },
       { new: true }
     );
 
@@ -82,9 +112,9 @@ app.put("/api/appraisals/:empId", async (req, res) => {
     console.error("❌ Error updating appraisal:", error);
     res.status(500).json({ error: "Server error" });
   }
-
-
 });
+
+
 //FETCH objectives
   app.get("/api/objectives/:grade", async (req, res) => {
   try {
