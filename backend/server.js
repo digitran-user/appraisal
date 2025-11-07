@@ -4,6 +4,7 @@ const cors = require("cors");
 const Employee = require("./models/Employee");
 const Objective = require("./models/Objective");
 const objectiveRoutes = require("./routes/objectiveRoutes");
+//const appraisalRoutes = require( "./routes/appraisalRoutes.js");
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,8 @@ mongoose.connect("mongodb://127.0.0.1:27017/empDetails", {
 
  // import objectiveRoutes from "./routes/objectiveRoutes.js";
 app.use("/api/objectives", objectiveRoutes);
+
+//app.use("/api/appraisal", appraisalRoutes);
 
 
 // ✅ API to get all employee data

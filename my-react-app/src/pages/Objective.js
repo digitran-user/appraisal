@@ -72,12 +72,15 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
         <h2>Goals</h2>
         <table style={{ width: "100%" }}>
           <thead>
-            <tr>
+           <tr>
               <th>Goal</th>
               <th>Weight %</th>
+              <th>Achievements %</th>
+               <th>Previous Cycle Rating (PAEY24-25)</th>
               <th>Self Rating</th>
               <th>Manager Rating</th>
               <th>Management Rating</th>
+               <th>Overall Rating</th>
             </tr>
           </thead>
           <tbody>
@@ -85,7 +88,12 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
               <tr key={goal.key}>
                 <td>{goal.value}</td>
                 <td>{goal.per}%</td>
-
+            <td>
+  <input/>
+  </td>       
+    <td>
+  <input/>
+  </td>
                 {/* ✅ Self rating */}
 <td>
   <input
@@ -143,6 +151,10 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     required
   />
 </td>
+<td>
+  <input/>
+  </td>       
+    
 
               </tr>
             ))}

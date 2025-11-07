@@ -119,6 +119,7 @@ const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
           ))}
         </tbody>
       </table>
+      Overall Comments: <textarea  style={{ border: "3px solid black" }} required />
     </div>
   );
 };
