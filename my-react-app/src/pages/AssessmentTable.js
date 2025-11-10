@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 
-const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
+const AssessmentTable = ({ grade, isManager, appraisal,savedAppraisal, setAppraisal }) => {
   const [areas, setAreas] = useState([]);
 
   useEffect(() => {
@@ -53,23 +53,23 @@ const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
             <tr key={index}>
               <td>{area}</td>
               <td><textarea required disabled={isManager}
-                value={appraisal.self?.[index]?.assessment || ""}
+                value={savedAppraisal.self?.[index]?.assessment || ""}
                 onChange={e => handleChange(index, "assessment", e.target.value, "self")}
               /></td>
               <td><textarea required disabled={isManager}
-                value={appraisal.self?.[index]?.performance || ""}
+                value={savedAppraisal.self?.[index]?.performance || ""}
                 onChange={e => handleChange(index, "performance", e.target.value, "self")}
               /></td>
               <td><textarea required disabled={isManager}
-                value={appraisal.self?.[index]?.achievements || ""}
+                value={savedAppraisal.self?.[index]?.achievements || ""}
                 onChange={e => handleChange(index, "achievements", e.target.value, "self")}
               /></td>
               <td><textarea required disabled={isManager}
-                value={appraisal.self?.[index]?.developments || ""}
+                value={savedAppraisal.self?.[index]?.developments || ""}
                 onChange={e => handleChange(index, "developments", e.target.value, "self")}
               /></td>
               <td><textarea required disabled={isManager}
-                value={appraisal.self?.[index]?.training || ""}
+                value={savedAppraisal.self?.[index]?.training || ""}
                 onChange={e => handleChange(index, "training", e.target.value, "self")}
               /></td>
             </tr>
@@ -96,23 +96,23 @@ const AssessmentTable = ({ grade, isManager, appraisal, setAppraisal }) => {
             <tr key={index}>
               <td>{area}</td>
               <td><textarea required disabled={!isManager}
-                value={appraisal.manager?.[index]?.assessment || ""}
+                value={savedAppraisal.manager?.[index]?.assessment || ""}
                 onChange={e => handleChange(index, "assessment", e.target.value, "manager")}
               /></td>
               <td><textarea required disabled={!isManager}
-                value={appraisal.manager?.[index]?.performance || ""}
+                value={savedAppraisal.manager?.[index]?.performance || ""}
                 onChange={e => handleChange(index, "performance", e.target.value, "manager")}
               /></td>
               <td><textarea required disabled={!isManager}
-                value={appraisal.manager?.[index]?.achievements || ""}
+                value={savedAppraisal.manager?.[index]?.achievements || ""}
                 onChange={e => handleChange(index, "achievements", e.target.value, "manager")}
               /></td>
               <td><textarea required disabled={!isManager}
-                value={appraisal.manager?.[index]?.developments || ""}
+                value={savedAppraisal.manager?.[index]?.developments || ""}
                 onChange={e => handleChange(index, "developments", e.target.value, "manager")}
               /></td>
               <td><textarea required disabled={!isManager}
-                value={appraisal.manager?.[index]?.training || ""}
+                value={savedAppraisal.manager?.[index]?.training || ""}
                 onChange={e => handleChange(index, "training", e.target.value, "manager")}
               /></td>
             </tr>

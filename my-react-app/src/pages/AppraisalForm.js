@@ -13,6 +13,7 @@ function AppraisalForm() {
   const [gradeGoals, setGradeGoals] = useState([]);
   const [isManager, setIsManager] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
+  const [viewerRole, setViewerRole] = useState("self"); // new
 
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
@@ -42,9 +43,10 @@ function AppraisalForm() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const empId = queryParams.get("q");
-    const viewer = queryParams.get("z");
+    const viewer = (queryParams.get("z") || "self").toLowerCase(); // 'self' | 'manager' | 'management'
 
-    setIsManager(viewer !== "self"); // if z=self → employee view
+    setIsManager(viewer !== "self"); // you can keep this for other logic if needed
+    setViewerRole(viewer); // new state to pass down
 
     if (empId) {
       fetchEmployee(empId);
@@ -145,13 +147,16 @@ function AppraisalForm() {
               goals={gradeGoals}
               isManager={isManager}
               appraisal={appraisal}
+              savedAppraisal={employee.appraisal}
               setAppraisal={setAppraisal}
+              viewerRole={viewerRole}   // <-- pass viewer role
             />
 
             <AssessmentTable
               grade={employee.grade}
               isManager={isManager}
               appraisal={appraisal}
+              savedAppraisal={employee.appraisal}
               setAppraisal={setAppraisal}
             />
 

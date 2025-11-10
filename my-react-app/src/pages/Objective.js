@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function Objective({ objectives = [], goals = [], grade, isManager, appraisal, setAppraisal }) {
+function Objective({ objectives = [], goals = [], isManager, appraisal, savedAppraisal, setAppraisal,viewerRole  }) {
  const handleChange = (index, key, value, type, field = "rating") => {
   setAppraisal((prev) => {
     const updatedGoals = [...(prev[type] || [])];
@@ -15,6 +15,27 @@ function Objective({ objectives = [], goals = [], grade, isManager, appraisal, s
     };
   });
 };
+
+// normalize viewer role safely
+const viewer = (viewerRole || "").toLowerCase();
+
+// define edit permissions based on viewer
+const canEditSelf = viewer === "self" || viewer === "employee";
+const canEditManager =
+  viewer === "manager" ||
+  viewer === "assistant manager" ||
+  viewer === "asst. manager" ||
+  viewer === "am";
+const canEditManagement =
+  viewer === "management" ||
+  viewer === "dir" ||
+  viewer === "director" ||
+  viewer.includes("co-founder") ||
+  viewer.includes("cofounder") ||
+  viewer === "topmanagement" ||
+  viewer === "top management";
+
+console.log("viewerRole:", viewerRole, { canEditSelf, canEditManager, canEditManagement });
 
 
 
@@ -40,6 +61,7 @@ const managerAverage = calculateAverage(appraisal.managerGoals);
 const managementAverage = calculateAverage(appraisal.managementGoals);
 
  
+
 
   return (
     
@@ -124,7 +146,7 @@ const managementAverage = calculateAverage(appraisal.managementGoals);
     min="0"
     max="100"
     value={
-      appraisal.selfGoals?.find((g) => g.key === goal.key)?.achievement || ""
+      savedAppraisal.selfGoals?.find((g) => g.key === goal.key)?.achievement || ""
     }
     onChange={(e) =>
       handleChange(index, goal.key, e.target.value, "selfGoals", "achievement")
@@ -143,10 +165,10 @@ const managementAverage = calculateAverage(appraisal.managementGoals);
     min="0"
     max="100"
     value={
-      appraisal.selfGoals?.find((g) => g.key === goal.key)?.previousCycle || ""
+      appraisal.selfGoals?.find((g) => g.key === goal.key)?.previousCycle || savedAppraisal.selfGoals
     }
     onChange={(e) =>
-      handleChange(index, goal.key, e.target.value, "selfGoals", "previousCycle")
+      handleChange(index, goal.key, e.target.value, "selfGoals", "previousCycleRating")
     }
     placeholder="Enter previous cycle rating"
     disabled={isManager}
@@ -154,68 +176,54 @@ const managementAverage = calculateAverage(appraisal.managementGoals);
 </td>
 
   
-{/* ✅ Self rating */}
+{/* Self rating */}
 <td>
   <input
     type="number"
     name={goal.key}
     min="0"
-    max={goal.per} // dynamic max per goal
-    value={
-  appraisal.selfGoals?.find((g) => g.key === goal.key)?.rating || ""
-}
-    onChange={(e) => {
-      const val = e.target.value;
-    //  if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
-        handleChange(index, goal.key, val, "selfGoals");
-   //   }
-    }}
+    max={goal.per}
+    value={savedAppraisal.selfGoals?.find((g) => g.key === goal.key)?.rating || ""}
+    onChange={(e) => handleChange(index, goal.key, e.target.value, "selfGoals")}
     placeholder="Enter self rating"
-    disabled={isManager}
+    disabled={!canEditSelf}
     required
   />
 </td>
 
-
-{/* ✅ Manager rating */}
+{/* Manager rating */}
 <td>
   <input
     type="number"
+    name={goal.key}
     min="0"
     max={goal.per}
-    name={goal.key}
-    value={appraisal.managerGoals?.find((g) => g.key === goal.key)?.rating || ""}
-    onChange={(e) => {
-      const val = e.target.value;
-     // if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
-        handleChange(index, goal.key, val, "managerGoals");
-     // }
-    }}
+    value={savedAppraisal.managerGoals?.find((g) => g.key === goal.key)?.rating || ""}
+    onChange={(e) => handleChange(index, goal.key, e.target.value, "managerGoals")}
     placeholder="Enter manager rating"
-    disabled={!isManager}
+    disabled={!canEditManager}
     required
   />
 </td>
 
-{/* ✅ Management rating */}
+{/* Management rating */}
 <td>
   <input
     type="number"
+    name={goal.key}
     min="0"
     max={goal.per}
-    name={goal.key}
-    value={appraisal.managementGoals?.find((g) => g.key === goal.key)?.rating || ""}
-    onChange={(e) => {
-      const val = e.target.value;
-     // if (val === "" || (Number(val) >= 0 && Number(val) <= Number(goal.per))) {
-        handleChange(index, goal.key, val, "managementGoals");
-     // }
-    }}
-     placeholder="Enter management rating"
-    disabled={!isManager}
+    value={savedAppraisal.managementGoals?.find((g) => g.key === goal.key)?.rating || ""}
+    onChange={(e) => handleChange(index, goal.key, e.target.value, "managementGoals")}
+    placeholder="Enter management rating"
+    disabled={!canEditManagement}
     required
   />
 </td>
+
+
+
+
 <td>
   <input/>
   </td>       
