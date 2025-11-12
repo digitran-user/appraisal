@@ -7,13 +7,15 @@ import AssessmentTable from "../pages/AssessmentTable";
 function AppraisalForm() {
   const location = useLocation();
 
-  const [appraisal, setAppraisal] = useState({});
+  //const [appraisal, setAppraisal] = useState({});
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
   const [gradeGoals, setGradeGoals] = useState([]);
   const [isManager, setIsManager] = useState(true);
   const [isChecked, setIsChecked] = useState(false);
-  const [viewerRole, setViewerRole] = useState("self"); // new
+ // const [viewerRole, setViewerRole] = useState("self"); // new
+  const [areas, setAreas] = useState([]);
+
 
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
@@ -34,6 +36,7 @@ function AppraisalForm() {
       const objData = await res.json();
       setGradeObjectives(objData?.objectives || []);
       setGradeGoals(objData?.goals || []);
+      setAreas(objData?.aoas.map(item => item.value));
     } catch (err) {
       console.error("Error fetching objectives:", err);
     }
@@ -45,65 +48,15 @@ function AppraisalForm() {
     const empId = queryParams.get("q");
     const viewer = (queryParams.get("z") || "self").toLowerCase(); // 'self' | 'manager' | 'management'
 
-    setIsManager(viewer !== "self"); // you can keep this for other logic if needed
-    setViewerRole(viewer); // new state to pass down
+    //setIsManager(viewer !== "self"); // you can keep this for other logic if needed
+   // setViewerRole(viewer); // new state to pass down
 
     if (empId) {
       fetchEmployee(empId);
     }
   }, []);
 
-  // ✅ Checkbox handler
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
-
-  // ✅ Submit entire appraisal
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!employee) {
-      alert("Employee data not loaded yet!");
-      return;
-    }
-
-    const finalData = {
-      
-      
-      appraisalData: appraisal,
-      submittedBy: isManager ? "manager" : "employee",
-      submittedAt: new Date(),
-    };
-     try {
-    // Suppose you have these values in state:
-    // empId → current employee’s ID (like "E123")
-    // appraisal → the full object that holds objectives + assessments, etc.
-
-    const response = await fetch(`http://localhost:5000/api/appraisals/${employee.empID}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({finalData}),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      alert("✅ Appraisal saved successfully!");
-      console.log("Updated employee:", data.employee);
-    } else {
-      alert(`❌ Failed to save appraisal! ${data.message || ""}`);
-      console.error("Server response:", data);
-    }
-  } catch (error) {
-    console.error("❌ Error while saving appraisal:", error);
-    alert("❌ Error saving appraisal!");
-  }
-
-    
-    alert(JSON.stringify(finalData));
-  };
+ 
 
   return (
     <div className="container">
@@ -134,58 +87,31 @@ function AppraisalForm() {
           <div className="spacer" />
 
           {/* ✅ MAIN APPRAISAL FORM */}
-          <form onSubmit={handleSubmit}>
+          <form >
             <PerformanceRating
-              appraisal={appraisal}
-              setAppraisal={setAppraisal}
+            //  appraisal={appraisal}
+            //  setAppraisal={setAppraisal}
               isManager={isManager}
             />
 
             <Objective
               objectives={gradeObjectives}
               grade={employee.grade}
+              empId={employee.empID}
               goals={gradeGoals}
-              isManager={isManager}
-              appraisal={appraisal}
-              savedAppraisal={employee.appraisal}
-              setAppraisal={setAppraisal}
-              viewerRole={viewerRole}   // <-- pass viewer role
+              areas={areas}
+            //  isManager={isManager}
+           //   appraisal={appraisal}
+           //   savedAppraisal={employee.appraisal}
+           //   setAppraisal={setAppraisal}
+        //      viewerRole={viewerRole}   // <-- pass viewer role
             />
 
-            <AssessmentTable
-              grade={employee.grade}
-              isManager={isManager}
-              appraisal={appraisal}
-              savedAppraisal={employee.appraisal}
-              setAppraisal={setAppraisal}
-            />
-
-            {/* ✅ Checkbox AFTER Overall Comments */}
-            <div style={{ paddingTop: "20px" }}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={handleCheckboxChange}
-                />{" "}
-                I agree that the above appraisal details are correct.
-              </label>
-              {isChecked && (
-                <p style={{ color: "green", marginTop: "8px" }}>
-                  ✅ Acknowledged by {isManager ? "Manager" : "Employee"}.
-                </p>
-              )}
-            </div>
-
-            <div className="form-group full-width">
-              <button type="submit" className="submit-btn">
-                Submit Appraisal
-              </button>
-            </div>
+          
+ 
           </form>
 
-          {/* Debugging view */}
-          <pre>{JSON.stringify(appraisal, null, 2)}</pre>
+         
         </>
       )}
     </div>
