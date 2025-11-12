@@ -3,7 +3,7 @@ import axios from "axios";
 
 function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
   const [employeeId, setEmployeeID] = useState(null);
-  const [appraisal, setAppraisal] = useState(null);
+  const [reporteeappraisal, setAppraisal] = useState(null);
   const [loading, setLoading] = useState(true);
  const [checked, setChecked] = useState(false);
   // Fetch appraisal data on mount or empId change
@@ -22,8 +22,8 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
         setAppraisal(data);
       } else {
         setAppraisal({
-          selfGoals: goals.map((g) => ({ key: g.key, rating: "" })),
-          self: areas.map(() => ({
+          managerGoals: goals.map((g) => ({ key: g.key, rating: "" })),
+          manager: areas.map(() => ({
             assessment: "",
             performance: "",
             achievements: "",
@@ -35,8 +35,8 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
     } catch (error) {
       console.error("Error fetching appraisal:", error);
       setAppraisal({
-        selfGoals: goals.map((g) => ({ key: g.key, rating: "" })),
-        self: areas.map(() => ({
+        managerGoals: goals.map((g) => ({ key: g.key, rating: "" })),
+        manager: areas.map(() => ({
           assessment: "",
           performance: "",
           achievements: "",
@@ -53,19 +53,19 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
   const handleChange = (index, key, value, section) => {
     setAppraisal((prev) => {
       const updated = { ...prev };
-      if (section === "selfGoals") {
-        const selfGoals = [...(updated.selfGoals || [])];
-        selfGoals[index] = {
-          ...(selfGoals[index] || {}),
+      if (section === "managerGoals") {
+        const managerGoals = [...(updated.managerGoals || [])];
+        managerGoals[index] = {
+          ...(managerGoals[index] || {}),
           rating: value,
           key: key,
         };
-        updated.selfGoals = selfGoals;
+        updated.managerGoals = managerGoals;
       }
-      if (section === "self") {
-        const self = [...(updated.self || [])];
-        self[index] = { ...(self[index] || {}), [key]: value };
-        updated.self = self;
+      if (section === "manager") {
+        const manager = [...(updated.manager || [])];
+        manager[index] = { ...(manager[index] || {}), [key]: value };
+        updated.manager = manager;
       }
       return updated;
     });
@@ -76,11 +76,11 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
     try {
       const payload = {
         empID: employeeId,
-        selfGoals: appraisal.selfGoals,
-        self: appraisal.self,
+        managerGoals: reporteeappraisal.managerGoals,
+        manager: reporteeappraisal.manager,
       };
       alert(JSON.stringify(payload));
-      await axios.post("http://localhost:5000/api/selfAppraisal", payload);
+      await axios.post("http://localhost:5000/api/reporteeappraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();
     } catch (err) {
@@ -90,7 +90,7 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
   };
 
   if (loading) return <p>Loading...</p>;
-  if (!appraisal) return <p>No data found.</p>;
+  if (!reporteeappraisal) return <p>No data found.</p>;
 
   return (
     <div style={{ padding: "20px" }}>
@@ -149,7 +149,12 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
             <tr>
               <th>Goal</th>
               <th>Weight %</th>
+              <th>Achievements</th>
+              <th>PreviousCycleRating</th>
+
               <th>Self Rating</th>
+              <th>Manager Rating</th>
+             
             </tr>
           </thead>
           <tbody>
@@ -157,25 +162,60 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
               <tr key={goal.key}>
                 <td>{goal.value}</td>
                 <td>{goal.per}%</td>
+                {/* ✅ Achievements % */}
+<td>
+  <input
+    type="number"
+    name={`ach_${goal.key}`}
+    min="0"
+    max="100"
+    value={reporteeappraisal.managerGoals?.[index]?.achievements || ""}
+    onChange={(e) =>
+      handleChange(index, goal.key, e.target.value, "managerGoals")
+    }
+    placeholder="Enter achievement %"
+   // disabled={isManager}
+    required
+  />
+</td>
+
+{/* ✅ Previous Cycle Rating */}
+<td>
+  <label>PreviousCycleRating</label>
+   
+  
+</td>
+
+
                 <td>
-                  <input
-                    type="text"
-                    name={goal.key}
-                    value={appraisal.selfGoals?.[index]?.rating || ""}
-                    onChange={(e) =>
-                      handleChange(index, goal.key, e.target.value, "selfGoals")
-                    }
-                    placeholder="Enter self rating"
-                    required
-                  />
+                  <label>SelfRating</label>
                 </td>
-              </tr>
+              
+        {/* Manager rating */}
+<td>
+  <input
+    type="number"
+    name={goal.key}
+    min="0"
+    max={goal.per}
+    value={reporteeappraisal.managerGoals?.[index]?.rating || ""}
+    onChange={(e) => handleChange(index, goal.key, e.target.value, "managerGoals")}
+    placeholder="Enter manager rating"
+    //disabled={!canEditManager}
+    required
+  />
+</td>
+
+
+</tr>
             ))}
           </tbody>
         </table>
+        <div className="spacer" />
 
-        <h2>Employee Self Assessment</h2>
-        <table>
+
+        <h2>Manager's Comments</h2>
+         <table>
           <thead>
             <tr>
               <th>Area of Assessment</th>
@@ -192,48 +232,48 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
                 <td>{area}</td>
                 <td>
                   <textarea
-                    value={appraisal.self?.[index]?.assessment || ""}
+                    value={reporteeappraisal.manager?.[index]?.assessment || ""}
                     onChange={(e) =>
-                      handleChange(index, "assessment", e.target.value, "self")
+                      handleChange(index, "assessment", e.target.value, "manager")
                     }
                   />
                 </td>
                 <td>
                   <textarea
-                    value={appraisal.self?.[index]?.performance || ""}
+                    value={reporteeappraisal.manager?.[index]?.performance || ""}
                     onChange={(e) =>
-                      handleChange(index, "performance", e.target.value, "self")
+                      handleChange(index, "performance", e.target.value, "manager")
                     }
                   />
                 </td>
                 <td>
                   <textarea
-                    value={appraisal.self?.[index]?.achievements || ""}
+                    value={reporteeappraisal.manager?.[index]?.achievements || ""}
                     onChange={(e) =>
-                      handleChange(index, "achievements", e.target.value, "self")
+                      handleChange(index, "achievements", e.target.value, "manager")
                     }
                   />
                 </td>
                 <td>
                   <textarea
-                    value={appraisal.self?.[index]?.developments || ""}
+                    value={reporteeappraisal.manager?.[index]?.developments || ""}
                     onChange={(e) =>
-                      handleChange(index, "developments", e.target.value, "self")
+                      handleChange(index, "developments", e.target.value, "manager")
                     }
                   />
                 </td>
                 <td>
                   <textarea
-                    value={appraisal.self?.[index]?.training || ""}
+                    value={reporteeappraisal.self?.[index]?.training || ""}
                     onChange={(e) =>
-                      handleChange(index, "training", e.target.value, "self")
+                      handleChange(index, "training", e.target.value, "manager")
                     }
                   />
                 </td>
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> 
        <div> <label >
   <input
     type="checkbox"

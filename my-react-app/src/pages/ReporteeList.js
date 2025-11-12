@@ -17,7 +17,7 @@ const ReporteeList = () => {
 
   // ✅ Navigate to appraisal page
   const handleNavigate = (emp) => {
-    navigate(`/appraisal?q=${emp.empID}&z=manager`);
+    navigate(`/reporteeappraisal?q=${emp.empID}&z=manager`);
   };
 
   return (
