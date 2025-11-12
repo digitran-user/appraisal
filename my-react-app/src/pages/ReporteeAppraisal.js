@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import PerformanceRating from "../pages/PerformanceRating";
-import Objective from "../pages/Objective";
-import AssessmentTable from "../pages/AssessmentTable";
+import PerformanceRating from "./PerformanceRating";
+import ManagerObjective from "./ManagerObjective";
+import AssessmentTable from "./AssessmentTable";
 
-function AppraisalForm() {
+function ReporteeAppraisal() {
   const location = useLocation();
 
   //const [appraisal, setAppraisal] = useState({});
@@ -86,7 +86,7 @@ function AppraisalForm() {
           <form >
             <PerformanceRating/>
 
-            <Objective
+            <ManagerObjective
               objectives={gradeObjectives}
               grade={employee.grade}
               empId={employee.empID}
@@ -101,4 +101,4 @@ function AppraisalForm() {
   );
 }
 
-export default AppraisalForm;
+export default ReporteeAppraisal;

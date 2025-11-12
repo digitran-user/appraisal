@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-function Objective({ objectives = [], goals = [], areas = [], empId }) {
+function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
   const [employeeId, setEmployeeID] = useState(null);
   const [appraisal, setAppraisal] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -255,4 +255,4 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
   );
 }
 
-export default Objective;
+export default ManagerObjective;
