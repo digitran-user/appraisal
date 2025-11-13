@@ -172,6 +172,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
               </tr>
             ))}
+            
           </tbody>
         </table>
 
