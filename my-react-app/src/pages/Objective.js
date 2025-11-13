@@ -78,8 +78,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
         empID: employeeId,
         selfGoals: appraisal.selfGoals,
         self: appraisal.self,
+        submittedAt: new Date(),
       };
-      alert(JSON.stringify(payload));
+     // alert(JSON.stringify(payload));
       await axios.post("http://localhost:5000/api/selfAppraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();

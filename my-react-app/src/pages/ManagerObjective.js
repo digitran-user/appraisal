@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
+  const [comments,setComments] = useState("");
+  const [selfRating, setSelfRating] =useState(null);
   const [employeeId, setEmployeeID] = useState(null);
-  const [reporteeappraisal, setAppraisal] = useState(null);
+  const [reporteeappraisal, setReporteeAppraisal] = useState(null);
   const [loading, setLoading] = useState(true);
  const [checked, setChecked] = useState(false);
   // Fetch appraisal data on mount or empId change
@@ -15,14 +17,22 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
 
   const fetchAppraisal = async () => {
     try {
+       const response = await fetch(`http://localhost:5000/api/selfAppraisal/${empId}`);
+       const resData = await response.json();
+       if(resData){
+        setSelfRating(resData);
+       }
+      console.log(resData);
       // Use template literal to insert empId
-      const res = await fetch(`http://localhost:5000/api/selfAppraisal/${empId}`);
+      const res = await fetch(`http://localhost:5000/api/mangerAppraisal/${empId}`);
       const data = await res.json();
       if (data) {
-        setAppraisal(data);
+        setReporteeAppraisal(data);
+        console.log(data.comments);
+        setComments(data.comments);
       } else {
-        setAppraisal({
-          managerGoals: goals.map((g) => ({ key: g.key, rating: "" })),
+        setReporteeAppraisal({
+          managerGoals: goals.map((g) => ({ key: g.key, rating: "" ,achievements: ""})),
           manager: areas.map(() => ({
             assessment: "",
             performance: "",
@@ -30,12 +40,13 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
             developments: "",
             training: "",
           })),
+          
         });
       }
     } catch (error) {
       console.error("Error fetching appraisal:", error);
-      setAppraisal({
-        managerGoals: goals.map((g) => ({ key: g.key, rating: "" })),
+      setReporteeAppraisal({
+        managerGoals: goals.map((g) => ({ key: g.key, rating: "" ,achievements: ""})),
         manager: areas.map(() => ({
           assessment: "",
           performance: "",
@@ -43,44 +54,65 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
           developments: "",
           training: "",
         })),
+        
       });
+      setComments("");
     } finally {
       setLoading(false);
     }
   };
 
   // Update field values dynamically
-  const handleChange = (index, key, value, section) => {
-    setAppraisal((prev) => {
-      const updated = { ...prev };
+  const handleComment=(value) =>{
+setComments(value);
+  }
+    const handleChange = (index, key, value, section) => {
+     
+    setReporteeAppraisal((prev) => {
+      const updatedApp = { ...prev };
       if (section === "managerGoals") {
-        const managerGoals = [...(updated.managerGoals || [])];
+        const managerGoals = [...(updatedApp.managerGoals || [])];
         managerGoals[index] = {
           ...(managerGoals[index] || {}),
           rating: value,
           key: key,
         };
-        updated.managerGoals = managerGoals;
+        updatedApp.managerGoals = managerGoals;
       }
+      if (section === "achievements") {
+  const managerGoals = [...(updatedApp.managerGoals || [])];
+  managerGoals[index] = {
+    ...(managerGoals[index] || {}),
+    achievements: value,
+    key: key,
+    // maintain other properties if any
+  };
+  updatedApp.managerGoals = managerGoals;
+}
       if (section === "manager") {
-        const manager = [...(updated.manager || [])];
+        const manager = [...(updatedApp.manager || [])];
         manager[index] = { ...(manager[index] || {}), [key]: value };
-        updated.manager = manager;
+        updatedApp.manager = manager;
       }
-      return updated;
+       console.log(updatedApp);
+      return updatedApp;
     });
   };
 
+
   // Save to backend
   const handleSave = async (e) => {
+    console.log(reporteeappraisal);
     try {
       const payload = {
         empID: employeeId,
         managerGoals: reporteeappraisal.managerGoals,
         manager: reporteeappraisal.manager,
+         submittedAt: new Date(),
+         comments: comments,
       };
       alert(JSON.stringify(payload));
-      await axios.post("http://localhost:5000/api/reporteeappraisal", payload);
+      await axios.post("http://localhost:5000/api/managerAppraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();
     } catch (err) {
@@ -171,7 +203,7 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
     max="100"
     value={reporteeappraisal.managerGoals?.[index]?.achievements || ""}
     onChange={(e) =>
-      handleChange(index, goal.key, e.target.value, "managerGoals")
+      handleChange(index, goal.key, e.target.value, "achievements")
     }
     placeholder="Enter achievement %"
    // disabled={isManager}
@@ -185,10 +217,12 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
    
   
 </td>
-
-
-                <td>
-                  <label>SelfRating</label>
+              <td>
+              
+                  <label>{selfRating.selfGoals
+    ?.filter(Boolean)
+    .find((g) => g.key === goal.key)?.rating || "—"}
+                </label>
                 </td>
               
         {/* Manager rating */}
@@ -205,10 +239,8 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
     required
   />
 </td>
-
-
 </tr>
-            ))}
+))}
           </tbody>
         </table>
         <div className="spacer" />
@@ -286,7 +318,9 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
         all the information provided by you and all terms of use 
         acknowledged and accepted, under any and all circumstances.  </span>
 </label></div>
-    
+        Comments : <textarea style={{border : "2px solid #4CAF50"}}
+        value={comments || ""}
+        onChange={(e) =>handleComment(e.target.value)}/>
         <div style={{ marginTop: "20px" ,  display: "flex", justifyContent: "center" }}>
           <button  type="button" onClick={handleSave} className="submit-btn">Save</button>
         </div>

@@ -18,7 +18,8 @@ const SelfAppraisalSchema = new mongoose.Schema({
       developments: { type: String },
       training: { type: String },
     },
-  ]
+      ],
+      submittedAt :{type:String},
 });
 
 module.exports = mongoose.model("SelfAppraisal", SelfAppraisalSchema);

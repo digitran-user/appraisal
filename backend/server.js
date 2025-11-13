@@ -4,6 +4,7 @@ const cors = require("cors");
 const Employee = require("./models/Employee");
 const Objective = require("./models/Objective");
 const SelfAppraisal = require("./models/SelfAppraisal");
+const ManagerAppraisal = require("./models/ManagerAppraisal");
 const objectiveRoutes = require("./routes/objectiveRoutes");
 //const appraisalRoutes = require( "./routes/appraisalRoutes.js");
 
@@ -157,5 +158,29 @@ console.log(empId);
 app.post("/api/selfAppraisal", async (req, res) => {
   await SelfAppraisal.create(req.body);
   res.json({ message: "Self Appraisal saved successfully!" });
+});
+//manger appraisal
+app.get("/api/mangerAppraisal/:empId", async (req, res) => {
+ 
+  try {
+    
+    const empId = req.params.empId; // Get empId from URL
+    console.log(empId);
+    // Find one employee where empId matches
+    const managerAppraisal = await ManagerAppraisal.findOne({ "empID": empId });
+    console.log(managerAppraisal);
+    if (!managerAppraisal) {
+      return res.status(404).json({ message: "appraisal not found" });
+    }
+
+    res.json(managerAppraisal);
+  } catch (err) {
+    res.status(500).json({ message: "appraisal not found" });
+  }
+});
+app.post("/api/managerAppraisal", async (req, res) => {
+  console.log(req.body);
+  await ManagerAppraisal.create(req.body);
+  res.json({ message: "Manager Appraisal saved successfully!" });
 });
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));
