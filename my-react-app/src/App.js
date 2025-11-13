@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import ReporteeList from "./pages/ReporteeList";
 import AppraisalForm from "./pages/AppraisalForm";
 import ReporteeAppraisal from "./pages/ReporteeAppraisal";
+import ManagementAppraisal from "./pages/ManagementAppraisal";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
          <Route path="/" element={<Home />} />
         <Route path="/appraisal" element={<AppraisalForm />} />
         <Route path="/reporteeappraisal" element={<ReporteeAppraisal />} />
+         <Route path="/managementappraisal" element={<ManagementAppraisal />} />
         <Route path="/reportee" element={<ReporteeList />} />
       </Routes>
   </>
