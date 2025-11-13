@@ -161,7 +161,7 @@ app.post("/api/selfAppraisal", async (req, res) => {
   res.json({ message: "Self Appraisal saved successfully!" });
 });
 //manger appraisal
-app.get("/api/mangerAppraisal/:empId", async (req, res) => {
+app.get("/api/managerAppraisal/:empId", async (req, res) => {
  
   try {
     
@@ -186,7 +186,7 @@ app.post("/api/managerAppraisal", async (req, res) => {
 });
 
 //manger appraisal
-app.get("/api/mangementAppraisal/:empId", async (req, res) => {
+app.get("/api/managementAppraisal/:empId", async (req, res) => {
  
   try {
     

@@ -5,7 +5,7 @@ import ManagerObjective from "./ManagerObjective";
 import ManagementObjective from "./ManagementObjective";
 import AssessmentTable from "./AssessmentTable";
 
-function ManagementApprialsal() {
+function ManagementAppraisal() {
   const location = useLocation();
 
   //const [appraisal, setAppraisal] = useState({});
@@ -102,4 +102,4 @@ function ManagementApprialsal() {
   );
 }
 
-export default ManagementApprialsal;
+export default ManagementAppraisal;
