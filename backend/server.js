@@ -45,7 +45,12 @@ console.log(empId);
     res.status(500).json({ message: "Employee not found" });
   }
 });
+//Find all employees
+app.get("/api/employees", async (req, res) => {
+const employees = await Employee.find({});
+return res.json(employees);
 
+});
 //Find the reportees
 app.get("/api/reportees/:empId", async (req, res) => {
   try {

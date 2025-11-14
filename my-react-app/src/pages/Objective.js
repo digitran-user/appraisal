@@ -5,7 +5,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
   const [employeeId, setEmployeeID] = useState(null);
   const [appraisal, setAppraisal] = useState(null);
   const [loading, setLoading] = useState(true);
- const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(false);
   // Fetch appraisal data on mount or empId change
   useEffect(() => {
     setEmployeeID(empId);
@@ -16,7 +16,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
   const fetchAppraisal = async () => {
     try {
       // Use template literal to insert empId
-      const res = await fetch(`http://localhost:5000/api/selfAppraisal/${empId}`);
+      const res = await fetch(
+        `http://localhost:5000/api/selfAppraisal/${empId}`
+      );
       const data = await res.json();
       if (data) {
         setAppraisal(data);
@@ -51,6 +53,14 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
 
   // Update field values dynamically
   const handleChange = (index, key, value, section) => {
+    //debugger;
+    if (value != "") {
+      let ratingValue = parseInt(value);
+      if (ratingValue > 5) {
+        alert("Rating cannot exceed 5");
+        return;
+      }
+    }
     setAppraisal((prev) => {
       const updated = { ...prev };
       if (section === "selfGoals") {
@@ -80,7 +90,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
         self: appraisal.self,
         submittedAt: new Date(),
       };
-     // alert(JSON.stringify(payload));
+      // alert(JSON.stringify(payload));
       await axios.post("http://localhost:5000/api/selfAppraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();
@@ -163,6 +173,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                     type="text"
                     name={goal.key}
                     value={appraisal.selfGoals?.[index]?.rating || ""}
+                    disabled={isNaN(appraisal.selfGoals?.[index]?.rating) ? false : true}
                     onChange={(e) =>
                       handleChange(index, goal.key, e.target.value, "selfGoals")
                     }
@@ -172,7 +183,6 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
               </tr>
             ))}
-            
           </tbody>
         </table>
 
@@ -212,7 +222,12 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                   <textarea
                     value={appraisal.self?.[index]?.achievements || ""}
                     onChange={(e) =>
-                      handleChange(index, "achievements", e.target.value, "self")
+                      handleChange(
+                        index,
+                        "achievements",
+                        e.target.value,
+                        "self"
+                      )
                     }
                   />
                 </td>
@@ -220,7 +235,12 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                   <textarea
                     value={appraisal.self?.[index]?.developments || ""}
                     onChange={(e) =>
-                      handleChange(index, "developments", e.target.value, "self")
+                      handleChange(
+                        index,
+                        "developments",
+                        e.target.value,
+                        "self"
+                      )
                     }
                   />
                 </td>
@@ -236,21 +256,34 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
             ))}
           </tbody>
         </table>
-       <div> <label >
-  <input
-    type="checkbox"
-    required
-  />
-  <span>
-    The application form would be electronically signed by you by 
-      writing your name in the space below and this would be considered
-       as an authorized signed submission of the application form with
-        all the information provided by you and all terms of use 
-        acknowledged and accepted, under any and all circumstances.  </span>
-</label></div>
-    
-        <div style={{ marginTop: "20px" ,  display: "flex", justifyContent: "center" }}>
-          <button  type="button" onClick={handleSave} className="submit-btn">Save</button>
+        <div style={{display: "flex",
+            justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> 
+         
+          
+            <input type="checkbox" required  style={{display: "flex",
+             width: "3%",
+            justifyContent: "flex-start",
+             marginRight:"10px"}}></input>
+            <span>
+              The application form would be electronically signed by you by
+              writing your name in the space below and this would be considered
+              as an authorized signed submission of the application form with
+              all the information provided by you and all terms of use
+              acknowledged and accepted, under any and all circumstances.{" "}
+            </span>
+         
+        </div>
+
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button type="button" onClick={handleSave} className="submit-btn">
+            Save
+          </button>
         </div>
       </div>
     </div>

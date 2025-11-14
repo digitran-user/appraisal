@@ -82,18 +82,36 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
 setComments(value);
   }
     const handleChange = (index, key, value, section) => {
-     
+     // debugger
+      if (value != "" && section ==="managerGoals") {
+      let ratingValue = parseInt(value);
+      if (ratingValue > 5) {
+        alert("Rating cannot exceed 5");
+        return;
+      }
+    } 
+     if (value != "" && section ==="achievements") {
+      let achievement = parseInt(value);
+      let achievementAllowed = goals[index].per;
+      if (achievement > achievementAllowed) {
+        alert(`Achievement cannot exceed ${achievementAllowed}`);
+        return;
+      }
+    } 
+
     setReporteeAppraisal((prev) => {
       const updatedApp = { ...prev };
       if (section === "managerGoals") {
-        const managerGoals = [...(updatedApp.managerGoals || [])];
+       const managerGoals = [...(updatedApp.managerGoals || [])];
         managerGoals[index] = {
           ...(managerGoals[index] || {}),
           rating: value,
           key: key,
         };
         updatedApp.managerGoals = managerGoals;
+
       }
+
       if (section === "achievements") {
   const managerGoals = [...(updatedApp.managerGoals || [])];
   managerGoals[index] = {
@@ -113,8 +131,9 @@ setComments(value);
       return updatedApp;
     });
     //alert(JSON.stringify(selfRating.selfGoals));
-   //setSelfAverage(calculateAverageSelf(reporteeappraisal.selfGoals, selfRating.selfGoals ));
-   //setManagerAverage( calculateAverageManager(reporteeappraisal.managerGoals));
+    
+   setSelfAverage(calculateAverageSelf(reporteeappraisal.selfGoals, selfRating.selfGoals ));
+   setManagerAverage( calculateAverageManager(reporteeappraisal.managerGoals));
   };
 
 
@@ -154,14 +173,12 @@ const calculateAverageManager = (goals = []) => {
   goals.forEach((goal) => {
     const achievement = Number(goal.achievements) || 0;
     const rating = Number(goal.rating) || 0;
-    
-    
-
-    totalWeighted += (achievement/100) * rating;
+    totalWeighted += (achievement*rating)/100;
+    console.log(totalWeighted);
     totalCount++;
   });
 
-  return totalCount ? (totalWeighted / totalCount).toFixed(0) : 0;
+  return  Math.round(totalWeighted) ? Math.round(totalWeighted) : 0;
 };
 
 const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
@@ -186,7 +203,7 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
     }
   });
 
-  return totalCount ? Number((totalWeighted / totalCount).toFixed(0)) : 0;
+  return totalCount ? Math.round(totalWeighted) : 0;
 };
 
 
@@ -254,7 +271,7 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
             <tr>
               <th>Goal</th>
               <th>Weight %</th>
-              <th>Achievements</th>
+              <th>Achievements %</th>
               <th>PreviousCycleRating</th>
 
               <th>Self Rating</th>
@@ -269,11 +286,12 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
                 <td>{goal.per}%</td>
                 {/* ✅ Achievements % */}
 <td>
+  <div>
   <input
     type="number"
     name={`ach_${goal.key}`}
     min="0"
-    max="100"
+    max="{goal.per}%"
     value={reporteeappraisal.managerGoals?.[index]?.achievements || ""}
     onChange={(e) =>
       handleChange(index, goal.key, e.target.value, "achievements")
@@ -282,6 +300,8 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
    // disabled={isManager}
     required
   />
+   
+   </div>
 </td>
 
 {/* ✅ Previous Cycle Rating */}
@@ -398,23 +418,36 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
             ))}
           </tbody>
         </table> 
-       <div> <label >
-  <input
-    type="checkbox"
-    required
-  />
-  <span>
-    The application form would be electronically signed by you by 
-      writing your name in the space below and this would be considered
-       as an authorized signed submission of the application form with
-        all the information provided by you and all terms of use 
-        acknowledged and accepted, under any and all circumstances.  </span>
-</label></div>
+        <div style={{display: "flex",
+            justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> 
+         
+          
+            <input type="checkbox" required  style={{display: "flex",
+             width: "3%",
+            justifyContent: "flex-start",
+             marginRight:"10px"}}></input>
+            <span>
+              The application form would be electronically signed by you by
+              writing your name in the space below and this would be considered
+              as an authorized signed submission of the application form with
+              all the information provided by you and all terms of use
+              acknowledged and accepted, under any and all circumstances.{" "}
+            </span>
+         
+        </div>
         Comments : <textarea style={{border : "2px solid #4CAF50"}}
         value={comments || ""}
         onChange={(e) =>handleComment(e.target.value)}/>
-        <div style={{ marginTop: "20px" ,  display: "flex", justifyContent: "center" }}>
-          <button  type="button" onClick={handleSave} className="submit-btn">Save</button>
+        <div
+          style={{
+            marginTop: "20px",
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <button type="button" onClick={handleSave} className="submit-btn">
+            Save
+          </button>
         </div>
       </div>
     </div>

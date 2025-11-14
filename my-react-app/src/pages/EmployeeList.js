@@ -1,29 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const ReporteeList = () => {
-
-  const location = useLocation();
+const EmployeeList = () => {
   const navigate = useNavigate();
+  const [employee, setEmployee] = useState([]); // Fix: use [] instead of null
 
-  // ✅ Get Self ID from query params
-  const queryParams = new URLSearchParams(location.search);
-  const selfID = queryParams.get("id");
+  const fetchEmployee = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/employees`);
+      const data = await res.json();
 
-  // ✅ Load employees from localStorage
-  const employees = JSON.parse(localStorage.getItem("employees")) || [];
+      const excludedGrades = ["DIR", "BS5"];
+      const filteredEmployees = data.filter(
+        emp => !excludedGrades.includes(emp.grade)
+      );
+      setEmployee(filteredEmployees);
+    } catch (err) {
+      console.error("Error fetching employee:", err);
+    }
+  };
 
-  
+  // Fetch employees on component mount
+  useEffect(() => {
+    fetchEmployee();
+  }, []);
 
   // ✅ Navigate to appraisal page
   const handleNavigate = (emp) => {
-    navigate(`/reporteeappraisal?q=${emp.empID}&z=manager`);
+    navigate(`/managementappraisal?q=${emp.empID}&z=manager`);
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>Reportees List</h2>
-
       <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -35,9 +44,8 @@ const ReporteeList = () => {
             <th>Department</th>
           </tr>
         </thead>
-
         <tbody>
-          {employees.map((emp, idx) => (
+          {employee.map((emp, idx) => (
             <tr key={idx}>
               <td
                 style={{
@@ -50,7 +58,7 @@ const ReporteeList = () => {
                 {emp.empID}
               </td>
               <td>{emp.empName}</td>
-               <td>Pending appraisal</td>
+              <td>Pending appraisal</td>
               <td>{emp.designation}</td>
               <td>{emp.grade}</td>
               <td>{emp.department}</td>
@@ -58,13 +66,8 @@ const ReporteeList = () => {
           ))}
         </tbody>
       </table>
-
-      <br/>
-      <h2>
-      <button className="submit-btn" onClick={() => navigate(`/appraisal?q=${selfID}&z=self`)}>
-        Self Appraisal
-      </button></h2>
     </div>
   );
 };
-export default ReporteeList;
+
+export default EmployeeList;

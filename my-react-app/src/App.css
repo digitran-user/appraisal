@@ -149,6 +149,7 @@ button.submit-btn:hover {
   button.submit-btn {
     font-size: 14px;
     padding: 10px;
+    
   }
 }
 .spacer {
@@ -156,7 +157,11 @@ button.submit-btn:hover {
   height: 20px; /* default vertical space */
   width: 100%;
   }
+.spacerSmall {
+  display: block;
+  margin-right: 2px /* default vertical space */
 
+  }
   .line
   {
   display:block;
@@ -181,7 +186,5 @@ body, html {
   .table-container {
     flex-direction: row;
   }
-
-
 
 
