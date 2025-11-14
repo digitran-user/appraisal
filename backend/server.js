@@ -162,8 +162,18 @@ console.log(empId);
   }
 });
 app.post("/api/selfAppraisal", async (req, res) => {
-  await SelfAppraisal.create(req.body);
-  res.json({ message: "Self Appraisal saved successfully!" });
+  try {
+    const { empID } = req.body;
+    const updated = await SelfAppraisal.findOneAndUpdate(
+      { empID },
+      req.body,
+      { new: true, upsert: true } // ✅ upsert ensures update-or-create
+    );
+    res.json({ message: "Self Appraisal saved successfully!", data: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to save self appraisal" });
+  }
 });
 //manger appraisal
 app.get("/api/managerAppraisal/:empId", async (req, res) => {
@@ -185,10 +195,20 @@ app.get("/api/managerAppraisal/:empId", async (req, res) => {
   }
 });
 app.post("/api/managerAppraisal", async (req, res) => {
-  console.log(req.body);
-  await ManagerAppraisal.create(req.body);
-  res.json({ message: "Manager Appraisal saved successfully!" });
+  try {
+    const { empID } = req.body;
+    const updated = await ManagerAppraisal.findOneAndUpdate(
+      { empID },
+      req.body,
+      { new: true, upsert: true }
+    );
+    res.json({ message: "Manager Appraisal saved successfully!", data: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to save manager appraisal" });
+  }
 });
+
 
 //manger appraisal
 app.get("/api/managementAppraisal/:empId", async (req, res) => {
@@ -210,9 +230,19 @@ app.get("/api/managementAppraisal/:empId", async (req, res) => {
   }
 });
 app.post("/api/managementAppraisal", async (req, res) => {
-  console.log(req.body);
-  await ManagementAppraisal.create(req.body);
-  res.json({ message: "Management Appraisal saved successfully!" });
+  try {
+    const { empID } = req.body;
+    const updated = await ManagementAppraisal.findOneAndUpdate(
+      { empID },
+      req.body,
+      { new: true, upsert: true }
+    );
+    res.json({ message: "Management Appraisal saved successfully!", data: updated });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to save management appraisal" });
+  }
 });
+
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

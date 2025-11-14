@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Objective({ objectives = [], goals = [], areas = [], empId }) {
   const [employeeId, setEmployeeID] = useState(null);
   const [appraisal, setAppraisal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [checked, setChecked] = useState(false);
+   const navigate = useNavigate();
   // Fetch appraisal data on mount or empId change
   useEffect(() => {
     setEmployeeID(empId);
@@ -83,22 +85,50 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
 
   // Save to backend
   const handleSave = async (e) => {
-    try {
-      const payload = {
-        empID: employeeId,
-        selfGoals: appraisal.selfGoals,
-        self: appraisal.self,
-        submittedAt: new Date(),
-      };
-      // alert(JSON.stringify(payload));
-      await axios.post("http://localhost:5000/api/selfAppraisal", payload);
-      alert("✅ Appraisal saved successfully!");
-      e.preventDefault();
-    } catch (err) {
-      console.error("Error saving appraisal:", err);
-      alert("❌ Failed to save appraisal");
+  e.preventDefault(); // stop default submit and page reload
+
+  // --- 1) validate goal ratings ---
+  for (let i = 0; i < goals.length; i++) {
+    const goal = goals[i];
+    const rating = appraisal.selfGoals?.[i]?.rating;
+    if (!rating || String(rating).trim() === "") {
+      alert(`Please enter self rating for goal: "${goal.value}"`);
+      const el = document.getElementsByName(`selfGoal_${goal.key}`)[0];
+      if (el) el.focus();
+      return;
     }
-  };
+  }
+
+  
+
+  // --- 3) validate checkbox ---
+  const agreementEl = document.getElementsByName("agreement")[0];
+  if (!agreementEl || !agreementEl.checked) {
+    alert("Please confirm the agreement checkbox before submitting.");
+    if (agreementEl) agreementEl.focus();
+    return;
+  }
+
+  // --- 4) All validations passed — construct payload & save ---
+  try {
+    const payload = {
+      empID: employeeId,
+      selfGoals: appraisal.selfGoals || [],
+      self: appraisal.self || [],
+      submittedAt: new Date(),
+    };
+
+    console.log("Saving payload:", payload);
+    await axios.post("http://localhost:5000/api/selfAppraisal", payload);
+    alert("✅ Appraisal saved successfully!");
+  } catch (err) {
+    console.error("Error saving appraisal:", err);
+    alert("❌ Failed to save appraisal");
+  }
+ 
+navigate("/");
+};
+
 
   if (loading) return <p>Loading...</p>;
   if (!appraisal) return <p>No data found.</p>;
@@ -170,16 +200,16 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 <td>{goal.per}%</td>
                 <td>
                   <input
-                    type="text"
-                    name={goal.key}
-                    value={appraisal.selfGoals?.[index]?.rating || ""}
-                    disabled={isNaN(appraisal.selfGoals?.[index]?.rating) ? false : true}
-                    onChange={(e) =>
-                      handleChange(index, goal.key, e.target.value, "selfGoals")
-                    }
-                    placeholder="Enter self rating"
-                    required
-                  />
+  type="text"
+  name={goal.key}
+  value={appraisal.selfGoals?.[index]?.rating || ""}
+  //disabled={!isNaN(appraisal.selfGoals?.[index]?.rating)}
+  onChange={(e) =>
+    handleChange(index, goal.key, e.target.value, "selfGoals")
+  }
+  placeholder="Enter self rating"
+  required
+/>
                 </td>
               </tr>
             ))}
@@ -204,7 +234,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 <td>{area}</td>
                 <td>
                   <textarea
+                  name={`self_${index}_assessment`}  
                     value={appraisal.self?.[index]?.assessment || ""}
+                    //required
                     onChange={(e) =>
                       handleChange(index, "assessment", e.target.value, "self")
                     }
@@ -212,7 +244,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
                 <td>
                   <textarea
+                    name={`self_${index}_performance`}
                     value={appraisal.self?.[index]?.performance || ""}
+                    //required
                     onChange={(e) =>
                       handleChange(index, "performance", e.target.value, "self")
                     }
@@ -220,7 +254,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
                 <td>
                   <textarea
+                  name={`self_${index}_achievements`}
                     value={appraisal.self?.[index]?.achievements || ""}
+                    //required
                     onChange={(e) =>
                       handleChange(
                         index,
@@ -233,7 +269,9 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
                 <td>
                   <textarea
+                  name={`self_${index}_developments`}
                     value={appraisal.self?.[index]?.developments || ""}
+                    //required
                     onChange={(e) =>
                       handleChange(
                         index,
@@ -246,9 +284,12 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
                 </td>
                 <td>
                   <textarea
+                  name={`self_${index}_training`}
                     value={appraisal.self?.[index]?.training || ""}
+                    //required
                     onChange={(e) =>
                       handleChange(index, "training", e.target.value, "self")
+                      
                     }
                   />
                 </td>
@@ -260,16 +301,12 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
             justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> 
          
           
-            <input type="checkbox" required  style={{display: "flex",
+            <input type="checkbox" name="agreement" required  style={{display: "flex",
              width: "3%",
             justifyContent: "flex-start",
              marginRight:"10px"}}></input>
             <span>
-              The application form would be electronically signed by you by
-              writing your name in the space below and this would be considered
-              as an authorized signed submission of the application form with
-              all the information provided by you and all terms of use
-              acknowledged and accepted, under any and all circumstances.{" "}
+             The data provided are to the best of my knowledge and I accept all terms of use.{" "}
             </span>
          
         </div>
@@ -282,7 +319,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
           }}
         >
           <button type="button" onClick={handleSave} className="submit-btn">
-            Save
+            Submit and Logout
           </button>
         </div>
       </div>
