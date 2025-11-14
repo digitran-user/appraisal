@@ -3,6 +3,27 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 // --- CALCULATE AVERAGES --- //
+const calculateAverageOverallRating = (managerGoals = [], managementGoals = []) => {
+  if (!managerGoals?.length || !managementGoals?.length) return 0;
+
+  let totalWeighted = 0;
+  let count = 0;
+
+  managerGoals.forEach((mg) => {
+    const mgmtGoal = managementGoals.find((gg) => gg.key === mg.key);
+
+    const achievement = Number(mg.achievements) || 0;      // percentage
+    const rating = Number(mgmtGoal?.overallRating) || 0;   // 1–5
+
+    const weighted = (achievement / 100) * rating;         // main formula
+    totalWeighted += weighted;
+    count++;
+  });
+
+  return count ? Number(totalWeighted.toFixed(0)) : 0;
+};
+
+
 const calculateAverageManagement = (managerGoals = [], managementGoals = []) => {
   if (!managerGoals?.length || !managementGoals?.length) return 0;
 
@@ -20,7 +41,7 @@ const calculateAverageManagement = (managerGoals = [], managementGoals = []) => 
     }
   });
 
-  return totalCount ? Number((totalWeighted / totalCount).toFixed(0)) : 0;
+  return totalCount ? Number((totalWeighted ).toFixed(0)) : 0;
 };
 
 const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
@@ -40,7 +61,7 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
     }
   });
 
-  return totalCount ? Number((totalWeighted / totalCount).toFixed(0)) : 0;
+  return totalCount ? Number((totalWeighted).toFixed(0)) : 0;
 };
 
 const calculateAverageManager = (managerGoals = []) => {
@@ -59,14 +80,15 @@ const calculateAverageManager = (managerGoals = []) => {
     }
   });
 
-  return totalCount ? Number((totalWeighted / totalCount).toFixed(0)) : 0;
+  return totalCount ? Number((totalWeighted).toFixed(0)) : 0;
 };
 
 // --- COMPONENT STARTS --- //
 function ManagementObjective({ objectives = [], goals = [], areas = [], empId }) {
   const [comments, setComments] = useState("");
-   const [overallRating, setOverallRating] = useState("");
-   const [finalRating, setfinalRating] = useState("");
+  const [overallRating, setOverallRating] = useState([]); // <-- changed to array for per-row ratings
+  const [finalRating, setfinalRating] = useState("");
+  const [averageOverallRating, setAverageOverallRating] = useState(0);
   const [selfRating, setSelfRating] = useState([]);
   const [selfAverage, setSelfAverage] = useState("");
   const [managerAverage, setManagerAverage] = useState("");
@@ -147,118 +169,157 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
         managementAppraisal?.managementGoals || []
       );
       setManagementAverage(mgmtAvg);
+      // ⭐ 4️⃣ NEW — Average Overall Rating
+    const overallAvg = calculateAverageOverallRating(
+      reporteeappraisal.managerGoals,
+      managementAppraisal?.managementGoals || []
+    );
+    setAverageOverallRating(overallAvg);  // <-- You must create this state
     }
+    
   }, [reporteeappraisal, selfRating, managementAppraisal]);
+
   // Update field values dynamically
-  const handleComment=(value) =>{
-setComments(value);
-  }
+  const handleComment = (value) => {
+    setComments(value);
+  };
 
   // --- Handle management rating/comment changes --- //
   const handleChange = (index, key, value, section) => {
-    debugger 
-     if (value != "" && section === "managementGoals") {
-    let sRating =  selfRating?.selfGoals?.[index].rating|| 0;
-    let managerRating =   reporteeappraisal?.managerGoals?.[index].rating || 0;
-    let average = (parseInt(sRating) + parseInt(managerRating) + parseInt(value))/3;
-    //debugger ;
-    setOverallRating(parseInt(average));
-     }
-      if (value != "" && section === "managementGoals") {
-      let ratingValue = parseInt(value);
-      if (ratingValue > 5) {
-        alert("Rating cannot exceed 5");
-        return;
-      }
-    }
+  debugger;
+  if (value !== "" && section === "managementGoals") {
+    // safe numeric casts
+    const sRating = Number(selfRating?.selfGoals?.[index]?.rating) || 0;
+    const managerRating = Number(reporteeappraisal?.managerGoals?.[index]?.rating) || 0;
+    const mgmtRating = Number(value) || 0;
+
+    const average = (sRating + managerRating + mgmtRating) / 3;
+
+    // set per-row UI display
+    setOverallRating((prev) => {
+      const copy = Array.isArray(prev) ? [...prev] : [];
+      copy[index] = Math.round(average);
+      return copy;
+    });
+
+    // also store per-row inside managementAppraisal so backend receives it
     setManagementAppraisal((prev) => {
       const updatedApp = { ...prev };
-      if (section === "managementGoals") {
-        const managementGoals = [...(updatedApp.managementGoals || [])];
-        managementGoals[index] = {
-          ...(managementGoals[index] || {}),
-          rating: value,
-          key: key,
-          comments: managementGoals[index]?.comments || "",
-        };
-        updatedApp.managementGoals = managementGoals;
-      } else if (section === "comments") {
-        const managementGoals = [...(prev.managementGoals || [])];
-        managementGoals[index] = {
-          ...(managementGoals[index] || {}),
-          comments: value,
-          key: key,
-          rating: managementGoals[index]?.rating || "",
-        };
-        updatedApp.managementGoals = managementGoals;
-      }
+      const managementGoals = [...(updatedApp.managementGoals || [])];
+
+      managementGoals[index] = {
+        ...(managementGoals[index] || {}),
+        key,
+        rating: value,
+        comments: managementGoals[index]?.comments || "",
+        overallRating: Math.round(average),   // <-- IMPORTANT CHANGE
+      };
+
+      updatedApp.managementGoals = managementGoals;
       return updatedApp;
     });
-  };
 
-  // --- Save data to backend --- //
-  const handleSave = async (e) => {
-  if (e) e.preventDefault();
+    return; // prevent duplicate update below
+  }
 
-  // --- 1) validate goal ratings ---
-  for (let i = 0; i < goals.length; i++) {
-    const goal = goals[i];
-    const rating = managementAppraisal.managementGoals?.[i]?.rating;
-    if (!rating || String(rating).trim() === "") {
-      alert(`Please enter management rating for goal: "${goal.value}"`);
-      const el = document.getElementsByName(`managementGoal_${goal.key}`)[0];
-      if (el) el.focus();
+  if (value !== "" && section === "managementGoals") {
+    let ratingValue = parseInt(value);
+    if (ratingValue > 5) {
+      alert("Rating cannot exceed 5");
       return;
     }
   }
-    // --- 3) validate checkbox ---
-  const agreementEl = document.getElementsByName("agreement")[0];
-  if (!agreementEl || !agreementEl.checked) {
-    alert("Please confirm the agreement checkbox before submitting.");
-    if (agreementEl) agreementEl.focus();
-    return;
-  }
 
-  const payload = {
-    empId: employeeId, // lowercase
-    empID: employeeId, // uppercase
-    managementGoals: managementAppraisal.managementGoals || [],
-    submittedAt: new Date(),
-    submittedBy: "management",
-    averageSelfRating: selfAverage,
-    averageManagerRating: managerAverage,
-    averageManagementRating: managementAverage,
-  };
-
-  //console.log("📦 Sending payload:", JSON.stringify(payload, null, 2));
-
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/api/managementAppraisal",
-      payload,
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-
-    console.log("✅ Response:", response);
-    alert("✅ Appraisal saved successfully!");
-  } catch (err) {
-    console.error("❌ Error saving appraisal:", err);
-    if (err.response) {
-      console.error("🔍 Backend Response:", err.response.data);
-      alert(`❌ Server error: ${JSON.stringify(err.response.data)}`);
-    } else if (err.request) {
-      console.error("🚫 No response received from backend:", err.request);
-      alert("❌ No response from backend. Check if server is running.");
-    } else {
-      console.error("⚠️ Error during request setup:", err.message);
-      alert("❌ Failed to send request. Check console.");
+  setManagementAppraisal((prev) => {
+    const updatedApp = { ...prev };
+    if (section === "managementGoals") {
+      const managementGoals = [...(updatedApp.managementGoals || [])];
+      managementGoals[index] = {
+        ...(managementGoals[index] || {}),
+        rating: value,
+        key: key,
+        comments: managementGoals[index]?.comments || "",
+      };
+      updatedApp.managementGoals = managementGoals;
+    } else if (section === "comments") {
+      const managementGoals = [...(prev.managementGoals || [])];
+      managementGoals[index] = {
+        ...(managementGoals[index] || {}),
+        comments: value,
+        key: key,
+        rating: managementGoals[index]?.rating || "",
+      };
+      updatedApp.managementGoals = managementGoals;
     }
-  }
-  navigate("/");
+    return updatedApp;
+  });
 };
 
+
+  // --- Save data to backend --- //
+  const handleSave = async (e) => {
+    if (e) e.preventDefault();
+
+    // --- 1) validate goal ratings ---
+    for (let i = 0; i < goals.length; i++) {
+      const goal = goals[i];
+      const rating = managementAppraisal.managementGoals?.[i]?.rating;
+      if (!rating || String(rating).trim() === "") {
+        alert(`Please enter management rating for goal: "${goal.value}"`);
+        const el = document.getElementsByName(`managementGoal_${goal.key}`)[0];
+        if (el) el.focus();
+        return;
+      }
+    }
+    // --- 3) validate checkbox ---
+    const agreementEl = document.getElementsByName("agreement")[0];
+    if (!agreementEl || !agreementEl.checked) {
+      alert("Please confirm the agreement checkbox before submitting.");
+      if (agreementEl) agreementEl.focus();
+      return;
+    }
+
+    const payload = {
+  empID: employeeId,                             // ✔ only this, remove empId
+  managementGoals: (managementAppraisal.managementGoals || []).map(g => ({
+    key: g.key,
+    rating: Number(g.rating) || 0,               // ✔ number fix
+    comments: g.comments || "",
+    overallRating: Number(g.overallRating) || 0, // ✔ number fix
+  })),
+  submittedAt: new Date(),
+  submittedBy: "management",
+  averageSelfRating: String(selfAverage || 0),
+  averageManagerRating: String(managerAverage || 0),
+  averageManagementRating: String(managementAverage || 0),
+ averageOverallRating: String(averageOverallRating || 0)
+
+};
+try {
+  const response = await axios.post(
+    "http://localhost:5000/api/managementAppraisal",
+    payload,
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  console.log("✅ Response:", response);
+  alert("✅ Appraisal saved successfully!");
+} catch (err) {
+  console.error("❌ Error saving appraisal:", err);
+  if (err.response) {
+    alert(`❌ Server error: ${JSON.stringify(err.response.data)}`);
+  } else if (err.request) {
+    alert("❌ No response from backend. Check if server is running.");
+  } else {
+    alert("❌ Failed to send request. Check console.");
+  }
+}
+
+navigate("/");
+
+  };
 
   if (loading) return <p>Loading...</p>;
   if (!managementAppraisal) return <p>No data found.</p>;
@@ -311,10 +372,10 @@ setComments(value);
       )}
 
       {/* --- Goals Table --- */}
-      
+
       <div style={{ marginTop: "40px" }} className="assessment-table">
-      <h2>Comments</h2>
-         <table>
+        <h2>Comments</h2>
+        <table>
           <thead>
             <tr>
               <th>Area of Assessment</th>
@@ -330,39 +391,79 @@ setComments(value);
               <tr key={index}>
                 <td>{area}</td>
                 <td>
-                <label>Emp Comments</label>
-                <textarea disabled style= {{border:"1px solid black"}}value={selfRating.self?.[index]?.assessment || "—"}></textarea>
-                    <label>Manager Comments</label>
-                  <textarea disabled style= {{border:"1px solid black"}}value={reporteeappraisal.manager?.[index]?.assessment || "—"} />
+                  <label>Emp Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={selfRating.self?.[index]?.assessment || "—"}
+                  ></textarea>
+                  <label>Manager Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={reporteeappraisal?.manager?.[index]?.assessment || "—"}
+                  />
                 </td>
                 <td>
-                <label>Emp Comments</label>
-                <textarea disabled style= {{border:"1px solid black"}}value={selfRating.self?.[index]?.performance || "—"}></textarea>
-                 <label>Manager Comments</label>
-                  <textarea disabled style= {{border:"1px solid black"}}value={reporteeappraisal.manager?.[index]?.performance || "—"} />
+                  <label>Emp Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={selfRating.self?.[index]?.performance || "—"}
+                  ></textarea>
+                  <label>Manager Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={reporteeappraisal?.manager?.[index]?.performance || "—"}
+                  />
                 </td>
                 <td>
-                <label>Emp Comments</label>
-                <textarea disabled style= {{border:"1px solid black"}}value={selfRating.self?.[index]?.achievements || "—"}></textarea>
-                 <label>Manager Comments</label>
-                  <textarea disabled style= {{border:"1px solid black"}}value={reporteeappraisal.manager?.[index]?.achievements || "—"} />
+                  <label>Emp Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={selfRating.self?.[index]?.achievements || "—"}
+                  ></textarea>
+                  <label>Manager Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={reporteeappraisal?.manager?.[index]?.achievements || "—"}
+                  />
                 </td>
                 <td>
-                <label>Emp Comments</label>
-                <textarea disabled style= {{border:"1px solid black"}}value={selfRating.self?.[index]?.developments || "—"}></textarea>
-                 <label>Manager Comments</label>
-                  <textarea disabled style= {{border:"1px solid black"}}value={reporteeappraisal.manager?.[index]?.developments || "—"} />
+                  <label>Emp Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={selfRating.self?.[index]?.developments || "—"}
+                  ></textarea>
+                  <label>Manager Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={reporteeappraisal?.manager?.[index]?.developments || "—"}
+                  />
                 </td>
                 <td>
-                <label>Emp Comments</label>
-                <textarea disabled style= {{border:"1px solid black"}}value={selfRating.self?.[index]?.training || "—"}></textarea>
-                 <label>Manager Comments</label>
-                  <textarea disabled style= {{border:"1px solid black"}}value={reporteeappraisal.manager?.[index]?.training || "—"} />
+                  <label>Emp Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={selfRating.self?.[index]?.training || "—"}
+                  ></textarea>
+                  <label>Manager Comments</label>
+                  <textarea
+                    disabled
+                    style={{ border: "1px solid black" }}
+                    value={reporteeappraisal?.manager?.[index]?.training || "—"}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
-        </table> 
+        </table>
         <div className="spacer" />
 
         <h2>Goals</h2>
@@ -377,7 +478,6 @@ setComments(value);
               <th>Manager Rating</th>
               <th>Management Rating</th>
               <th>Overall Rating</th>
-
             </tr>
           </thead>
           <tbody>
@@ -386,26 +486,17 @@ setComments(value);
                 <td>{goal.value}</td>
                 <td>{goal.per}%</td>
                 <td>
-                  {
-                    reporteeappraisal?.managerGoals?.find(
-                      (g) => g.key === goal.key
-                    )?.achievements || "—"
-                  }
+                  {reporteeappraisal?.managerGoals?.find((g) => g.key === goal.key)
+                    ?.achievements || "—"}
                 </td>
                 <td>PreviousCycleRating</td>
                 <td>
-                  {
-                    selfRating?.selfGoals?.find(
-                      (g) => g.key === goal.key
-                    )?.rating || "—"
-                  }
+                  {selfRating?.selfGoals?.find((g) => g.key === goal.key)?.rating ||
+                    "—"}
                 </td>
                 <td>
-                  {
-                    reporteeappraisal?.managerGoals?.find(
-                      (g) => g.key === goal.key
-                    )?.rating || "—"
-                  }
+                  {reporteeappraisal?.managerGoals?.find((g) => g.key === goal.key)
+                    ?.rating || "—"}
                 </td>
                 <td>
                   <input
@@ -421,12 +512,20 @@ setComments(value);
                     required
                   />
                 </td>
-                 <td><input value = {overallRating}></input></td>
+                <td>
+                  <input
+                    value={overallRating[index] || ""}
+                    readOnly
+                    style={{ textAlign: "center", background: "#fff" }}
+                  />
+                </td>
               </tr>
             ))}
 
             <tr style={{ fontWeight: "bold", background: "#f8f9fa" }}>
-              <td colSpan="4" style={{ textAlign: "right" }}>Average Rating:</td>
+              <td colSpan="4" style={{ textAlign: "right" }}>
+                Average Rating:
+              </td>
               <td>
                 <input
                   value={selfAverage}
@@ -450,7 +549,7 @@ setComments(value);
               </td>
               <td>
                 <input
-                  value={finalRating}
+                  value={averageOverallRating}
                   readOnly
                   style={{ textAlign: "center", background: "#e9ecef" }}
                 />
@@ -459,25 +558,45 @@ setComments(value);
           </tbody>
         </table>
 
-        Overall Comments : <textarea style={{border : "2px solid #4CAF50"}}
-        value={comments || ""}
-        onChange={(e) =>handleComment(e.target.value)}/>
-        <div style={{display: "flex",
-            justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> </div>
+        Overall Comments :{" "}
+        <textarea
+          style={{ border: "2px solid #4CAF50" }}
+          value={comments || ""}
+          onChange={(e) => handleComment(e.target.value)}
+        />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            marginTop: "20px",
+            marginRight: "10px",
+          }}
+        ></div>
 
         {/* --- Checkbox and Save Button --- */}
-        <div style={{display: "flex",
-            justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> 
-         
-          
-            <input type="checkbox" name="agreement" required  style={{display: "flex",
-             width: "3%",
+        <div
+          style={{
+            display: "flex",
             justifyContent: "flex-start",
-             marginRight:"10px"}}></input>
-            <span>
-              The data provided are to the best of my knowledge and I accept all terms of use.{" "}
-            </span>
-         
+            marginTop: "20px",
+            marginRight: "10px",
+          }}
+        >
+          <input
+            type="checkbox"
+            name="agreement"
+            required
+            style={{
+              display: "flex",
+              width: "3%",
+              justifyContent: "flex-start",
+              marginRight: "10px",
+            }}
+          ></input>
+          <span>
+            The data provided are to the best of my knowledge and I accept all
+            terms of use.{" "}
+          </span>
         </div>
 
         <div

@@ -174,7 +174,7 @@ setComments(value);
          submittedAt: new Date(),
          comments: comments,
       };
-      alert(JSON.stringify(payload));
+      //alert(JSON.stringify(payload));
       await axios.post("http://localhost:5000/api/managerAppraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();

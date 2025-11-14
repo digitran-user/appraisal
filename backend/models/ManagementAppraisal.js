@@ -5,8 +5,9 @@ const managementAppraisalSchema = new mongoose.Schema({
   managementGoals: [
     {
       key: String,
-      rating: String,
-      comments: String
+      rating: Number,
+      comments: String,
+      overallRating:Number
     },
   ],
   
@@ -15,7 +16,7 @@ const managementAppraisalSchema = new mongoose.Schema({
   averageSelfRating:  {type:String},
   averageManagerRating:  {type:String},
   averageManagementRating:  {type:String},
-
+ averageOverallRating: {type:String}
 });
 
 module.exports = mongoose.model("ManagementAppraisal", managementAppraisalSchema);

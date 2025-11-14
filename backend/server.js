@@ -210,7 +210,7 @@ app.post("/api/managerAppraisal", async (req, res) => {
 });
 
 
-//manger appraisal
+//management appraisal
 app.get("/api/managementAppraisal/:empId", async (req, res) => {
  
   try {
@@ -231,18 +231,24 @@ app.get("/api/managementAppraisal/:empId", async (req, res) => {
 });
 app.post("/api/managementAppraisal", async (req, res) => {
   try {
-    const { empID } = req.body;
+    const payload = {
+      ...req.body,
+      averageOverallRating: String(req.body.averageOverallRating || 0), // ensure it exists
+    };
+
     const updated = await ManagementAppraisal.findOneAndUpdate(
-      { empID },
-      req.body,
+      { empID: payload.empID },
+      payload,
       { new: true, upsert: true }
     );
+
     res.json({ message: "Management Appraisal saved successfully!", data: updated });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to save management appraisal" });
   }
 });
+
 
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));
