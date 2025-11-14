@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
+function ManagerObjective({ objectives = [], goals = [], areas = [], empId, previousRating}) {
+  
+  const [previousYearRating, setPreviousYearRating] = useState(null);
   const [comments,setComments] = useState("");
   const [selfAverage,setSelfAverage] = useState("");
   const [managerAverage,setManagerAverage] = useState("");
@@ -14,6 +16,7 @@ function ManagerObjective({ objectives = [], goals = [], areas = [], empId }) {
  const navigate = useNavigate();
   // Fetch appraisal data on mount or empId change
   useEffect(() => {
+    setPreviousYearRating(previousRating);
     setEmployeeID(empId);
     fetchAppraisal();
     // eslint-disable-next-line
@@ -406,8 +409,9 @@ const calculateAverageSelf = (managerGoals = [], selfGoals = []) => {
 </td>
 
 {/* ✅ Previous Cycle Rating */}
+
 <td>
-  <label>PreviousCycleRating</label>
+  <label>{previousYearRating}</label>
    
   
 </td>

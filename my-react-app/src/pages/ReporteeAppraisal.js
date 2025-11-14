@@ -77,6 +77,8 @@ function ReporteeAppraisal() {
             <div className="form-group"><label>Assessment Type:</label><label>{employee.assessmentType}</label></div>
             <div className="form-group"><label>Manager/Appraiser:</label><label>{employee.reportsTo}</label></div>
             <div className="form-group"><label>Management/Appraiser:</label><label>{employee.management}</label></div>
+         
+          
           </form>
 
           <div className="line" />
@@ -85,14 +87,13 @@ function ReporteeAppraisal() {
           {/* ✅ MAIN APPRAISAL FORM */}
           <form >
             <PerformanceRating/>
-
             <ManagerObjective
               objectives={gradeObjectives}
               grade={employee.grade}
               empId={employee.empID}
               goals={gradeGoals}
-              areas={areas}/>
-    </form>
+              areas={areas}
+              previousRating={employee.previousYearRating}/>    </form>
 
          
         </>

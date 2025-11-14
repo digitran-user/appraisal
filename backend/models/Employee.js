@@ -55,6 +55,8 @@ const empSchema = new mongoose.Schema(
     assPeriod: { type: String },
     servicePeriod: { type: String },
     reportsTo: { type: String },
+    status: { type: String },
+    previousYearRating: { type: String },
 
     performanceSummary: { type: String, default: "" },
     achievements: { type: String, default: "" },
