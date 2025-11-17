@@ -92,7 +92,10 @@ function ManagementAppraisal() {
               grade={employee.grade}
               empId={employee.empID}
               goals={gradeGoals}
-              areas={areas}/>
+              areas={areas}
+                  previousRating={employee.previousYearRating}
+                
+              />
     </form>
 
          

@@ -138,6 +138,8 @@ navigate("/");
   if (loading) return <p>Loading...</p>;
   if (!appraisal) return <p>No data found.</p>;
 
+  const isSubmitted = appraisal?.submittedAt ? true : false;
+
   return (
     <div style={{ padding: "20px" }}>
       {objectives.length === 0 ? (
@@ -212,7 +214,7 @@ navigate("/");
                     //required
                     onChange={(e) =>
                       handleChange(index, "assessment", e.target.value, "self")
-                    }
+                    } disabled={isSubmitted}
                   />
                 </td>
                 <td>
@@ -222,7 +224,7 @@ navigate("/");
                     //required
                     onChange={(e) =>
                       handleChange(index, "performance", e.target.value, "self")
-                    }
+                    } disabled={isSubmitted}
                   />
                 </td>
                 <td>
@@ -237,7 +239,7 @@ navigate("/");
                         e.target.value,
                         "self"
                       )
-                    }
+                    } disabled={isSubmitted}
                   />
                 </td>
                 <td>
@@ -250,9 +252,8 @@ navigate("/");
                         index,
                         "developments",
                         e.target.value,
-                        "self"
-                      )
-                    }
+                        "self" ) 
+                    } disabled={isSubmitted}
                   />
                 </td>
                 <td>
@@ -262,8 +263,7 @@ navigate("/");
                     //required
                     onChange={(e) =>
                       handleChange(index, "training", e.target.value, "self")
-                      
-                    }
+                    } disabled={isSubmitted}
                   />
                 </td>
               </tr>
@@ -295,6 +295,7 @@ type="number"
   }
   placeholder="Enter self rating"
   required
+  disabled = {appraisal.submittedAt ? true : false} 
 />
                 </td>
               </tr>

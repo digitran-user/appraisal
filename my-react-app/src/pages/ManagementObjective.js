@@ -86,8 +86,10 @@ const calculateAverageManager = (managerGoals = []) => {
 // --- COMPONENT STARTS --- //
 function ManagementObjective({ objectives = [], goals = [], areas = [], empId }) {
   const [comments, setComments] = useState("");
+  const [previousYearRating, setPreviousYearRating] = useState(null);
   const [overallRating, setOverallRating] = useState([]); // <-- changed to array for per-row ratings
   const [finalRating, setfinalRating] = useState("");
+  const [mgmtComments, setMgmtComments] = useState("");
   const [averageOverallRating, setAverageOverallRating] = useState(0);
   const [selfRating, setSelfRating] = useState([]);
   const [selfAverage, setSelfAverage] = useState("");
@@ -492,7 +494,9 @@ navigate("/");
                   {reporteeappraisal?.managerGoals?.find((g) => g.key === goal.key)
                     ?.achievements || "—"}
                 </td>
-                <td>PreviousCycleRating</td>
+                <td>
+                  <label>{index === 3 ? previousYearRating : ""}</label>
+                </td>
                 <td>
                   {selfRating?.selfGoals?.find((g) => g.key === goal.key)?.rating ||
                     "—"}
@@ -561,12 +565,27 @@ navigate("/");
           </tbody>
         </table>
 
-        Overall Comments :{" "}
+        Manager's Comments :{" "}
         <textarea
           style={{ border: "2px solid #4CAF50" }}
           value={comments || ""}
           onChange={(e) => handleComment(e.target.value)}
         />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-start",
+            marginTop: "20px",
+            marginRight: "10px",
+          }}
+        ></div>
+
+          Overall Comments :{" "}
+        <textarea
+  style={{ border: "2px solid #4CAF50" }}
+  value={mgmtComments || ""}
+  onChange={(e) => setMgmtComments(e.target.value)}
+/>
         <div
           style={{
             display: "flex",
