@@ -189,39 +189,7 @@ navigate("/");
 
       {/* Goals section */}
       <div style={{ marginTop: "40px" }} className="assessment-table">
-        <h2>Goals</h2>
-        <table style={{ width: "100%" }}>
-          <thead>
-            <tr>
-              <th>Goal</th>
-              <th>Weight %</th>
-              <th>Self Rating</th>
-            </tr>
-          </thead>
-          <tbody>
-            {goals.map((goal, index) => (
-              <tr key={goal.key}>
-                <td>{goal.value}</td>
-                <td>{goal.per}%</td>
-                <td>
-                  <input
-type="number"
-  name={goal.key}
-  value={appraisal.selfGoals?.[index]?.rating || ""}
-  //disabled={!isNaN(appraisal.selfGoals?.[index]?.rating)}
-  onChange={(e) =>
-    handleChange(index, goal.key, e.target.value, "selfGoals")
-  }
-  placeholder="Enter self rating"
-  required
-/>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        <h2>Employee Self Assessment</h2>
+          <h2>Employee Self Assessment</h2>
         <table>
           <thead>
             <tr>
@@ -302,6 +270,39 @@ type="number"
             ))}
           </tbody>
         </table>
+        <h2>Goals</h2>
+        <table style={{ width: "100%" }}>
+          <thead>
+            <tr>
+              <th>Goal</th>
+              <th>Weight %</th>
+              <th>Self Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            {goals.map((goal, index) => (
+              <tr key={goal.key}>
+                <td>{goal.value}</td>
+                <td>{goal.per}%</td>
+                <td>
+                  <input
+type="number"
+  name={goal.key}
+  value={appraisal.selfGoals?.[index]?.rating || ""}
+  //disabled={!isNaN(appraisal.selfGoals?.[index]?.rating)}
+  onChange={(e) =>
+    handleChange(index, goal.key, e.target.value, "selfGoals")
+  }
+  placeholder="Enter self rating"
+  required
+/>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+      
         <div style={{display: "flex",
             justifyContent: "flex-start", marginTop: "20px",marginRight: "10px"}}> 
          
