@@ -58,7 +58,7 @@ const EmployeeList = () => {
                 {emp.empID}
               </td>
               <td>{emp.empName}</td>
-              <td>Pending appraisal</td>
+              <td>{emp.status}</td>
               <td>{emp.designation}</td>
               <td>{emp.grade}</td>
               <td>{emp.department}</td>

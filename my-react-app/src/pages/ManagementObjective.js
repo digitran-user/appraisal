@@ -316,7 +316,10 @@ try {
     alert("❌ Failed to send request. Check console.");
   }
 }
-
+const res = await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+        status: "completed",
+      });
+console.log(res.message);
 navigate("/");
 
   };

@@ -164,6 +164,10 @@ function ManagerObjective({
     setManagerAverage(calculateAverageManager(reporteeappraisal.managerGoals));
   };
 
+  const handleBack = async (e) => {
+    e.preventDefault();
+    navigate(`/appraisal?q=${empId}&z=self`);
+  }
   // Save to backend
   const handleSave = async (e) => {
     //console.log(reporteeappraisal);
@@ -203,6 +207,12 @@ function ManagerObjective({
       console.error("Error saving appraisal:", err);
       alert("❌ Failed to save appraisal");
     }
+
+   const res =  await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+        status: "with management",
+      });
+    console.log(res.message);
+
     navigate("/");
   };
 
@@ -413,7 +423,7 @@ function ManagerObjective({
                   ></textarea>
                   <label>Manager Comments</label>
                   <textarea
-                    value={reporteeappraisal.self?.[index]?.training || ""}
+                    value={reporteeappraisal.manager?.[index]?.training || ""}
                     onChange={(e) =>
                       handleChange(index, "training", e.target.value, "manager")
                     }
@@ -487,7 +497,7 @@ function ManagerObjective({
                 {/* Manager rating */}
                 <td>
                   <input
-                    type="text"
+                   type="number"
                     name={goal.key}
                     min="0"
                     max={goal.per}

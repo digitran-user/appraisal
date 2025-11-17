@@ -249,6 +249,25 @@ app.post("/api/managementAppraisal", async (req, res) => {
   }
 });
 
+app.put("/api/updateStatus/:empId", async (req, res) => {
+  try {
+    const empId = req.params.empId;
+    const status = req.body.status;
 
+    const updated = await Employee.findOneAndUpdate(
+      { empID: empId },
+      { status: status },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Employee not found" });
+    }
+
+    res.json({ message: "Status updated", employee: updated });
+  } catch (error) {
+    res.status(500).json({ message: "Update failed", error });
+  }
+});
 
 app.listen(5000, () => console.log("🚀 Server running on port 5000"));

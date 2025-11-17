@@ -56,7 +56,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
   // Update field values dynamically
   const handleChange = (index, key, value, section) => {
     //debugger;
-    if (value != "") {
+    if (value != "" && section === "selfGoals") {
       let ratingValue = parseInt(value);
       if (ratingValue > 5) {
         alert("Rating cannot exceed 5");
@@ -125,7 +125,12 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
     console.error("Error saving appraisal:", err);
     alert("❌ Failed to save appraisal");
   }
- 
+  debugger;
+  const response = await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+        status: "with manager",
+      });
+      console.log(response.message);
+
 navigate("/");
 };
 
@@ -200,7 +205,7 @@ navigate("/");
                 <td>{goal.per}%</td>
                 <td>
                   <input
-  type="text"
+type="number"
   name={goal.key}
   value={appraisal.selfGoals?.[index]?.rating || ""}
   //disabled={!isNaN(appraisal.selfGoals?.[index]?.rating)}
