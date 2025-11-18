@@ -120,12 +120,19 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
       if (data) {
         setReporteeAppraisal(data);
         setComments(data.comments || "");
+        setOverallRating(data.overallRating || []);
       }
 
       const resManagement = await fetch(`http://localhost:5000/api/managementAppraisal/${empId}`);
       const managementData = await resManagement.json();
       if (managementData) {
         setManagementAppraisal(managementData);
+
+        //saved overallrating
+        if (managementData.managementGoals?.length) {
+    const savedOveralls = managementData.managementGoals.map(g => g.overallRating || "");
+    setOverallRating(savedOveralls);
+  }
       } else {
         setManagementAppraisal({
           managementGoals: goals.map((g) => ({ key: g.key, rating: "", comments: "" })),
