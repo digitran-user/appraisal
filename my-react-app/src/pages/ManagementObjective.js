@@ -530,7 +530,7 @@ navigate("/");
                   <input
                     value={overallRating[index] || ""}
                     readOnly
-                    style={{ textAlign: "center", background: "#fff" }}
+                    style={{ textAlign: "center", background: "#fff", border: "2px solid #4CAF50" }}
                   />
                 </td>
               </tr>
@@ -635,9 +635,9 @@ navigate("/");
             justifyContent: "center",
           }}
         >
-          <button type="button" onClick={handleSave} className="submit-btn">
+          { <button type="button" onClick={handleSave} className="submit-btn">
             Submit and Logout
-          </button>
+          </button> }
         </div>
       </div>
     </div>

@@ -104,7 +104,17 @@ const ReporteeList = () => {
                 {emp.empID}
               </td>
               <td>{emp.empName}</td>
-              <td>{emp.status}</td>
+              <td>
+  {emp.status === "with employee" ? (
+    <label style={{ color: "black" }}>{emp.status}</label>
+  ) : emp.status === "with manager" ? (
+    <label style={{ color: "blue" }}>{emp.status}</label>
+  ) : emp.status === "with management" ? (
+    <label style={{ color: "orange" }}>{emp.status}</label>
+  ) : (
+    <label style={{ color: "green" }}>{emp.status}</label>
+  )}
+</td>
               <td>{emp.designation}</td>
               <td>{emp.grade}</td>
               <td>{emp.department}</td>

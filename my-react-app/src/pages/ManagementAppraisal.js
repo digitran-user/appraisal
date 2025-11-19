@@ -4,6 +4,7 @@ import PerformanceRating from "./PerformanceRating";
 import ManagerObjective from "./ManagerObjective";
 import ManagementObjective from "./ManagementObjective";
 import AssessmentTable from "./AssessmentTable";
+import DownloadPDFWrapper from "../pages/DownloadPDFWrapper";
 
 function ManagementAppraisal() {
   const location = useLocation();
@@ -56,6 +57,7 @@ function ManagementAppraisal() {
  
 
   return (
+    
     <div className="container">
       <h2>Employee Appraisal Form</h2>
 
@@ -63,6 +65,7 @@ function ManagementAppraisal() {
         <p>Loading employee...</p>
       ) : (
         <>
+       
           {/* ✅ EMPLOYEE DETAILS */}
           <form className="form-grid">
             <div className="form-group"><label>Name:</label><label>{employee.empName}</label></div>
@@ -82,7 +85,7 @@ function ManagementAppraisal() {
 
           <div className="line" />
           <div className="spacer" />
-
+           <DownloadPDFWrapper fileName={`${employee.empName}_Appraisal_2024`}>
           {/* ✅ MAIN APPRAISAL FORM */}
           <form >
             <PerformanceRating/>
@@ -97,11 +100,12 @@ function ManagementAppraisal() {
                 
               />
     </form>
-
+</DownloadPDFWrapper>
          
         </>
       )}
     </div>
+    
   );
 }
 

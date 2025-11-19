@@ -32,7 +32,7 @@ const EmployeeList = () => {
 
   return (
     <div style={{ padding: "20px" }}>
-      <h2>Reportees List</h2>
+      <h2>Employee List</h2>
       <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -58,7 +58,17 @@ const EmployeeList = () => {
                 {emp.empID}
               </td>
               <td>{emp.empName}</td>
-              <td>{emp.status}</td>
+              <td>
+  {emp.status === "with employee" ? (
+    <label style={{ color: "black" }}>{emp.status}</label>
+  ) : emp.status === "with manager" ? (
+    <label style={{ color: "blue" }}>{emp.status}</label>
+  ) : emp.status === "with management" ? (
+    <label style={{ color: "orange" }}>{emp.status}</label>
+  ) : (
+    <label style={{ color: "green" }}>{emp.status}</label>
+  )}
+</td>
               <td>{emp.designation}</td>
               <td>{emp.grade}</td>
               <td>{emp.department}</td>
