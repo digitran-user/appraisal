@@ -36,6 +36,7 @@
   color: white;
 }
 
+
 .App-link {
   color: #61dafb;
 }
@@ -149,6 +150,7 @@ button.submit-btn:hover {
   button.submit-btn {
     font-size: 14px;
     padding: 10px;
+    
   }
 }
 .spacer {
@@ -156,7 +158,11 @@ button.submit-btn:hover {
   height: 20px; /* default vertical space */
   width: 100%;
   }
+.spacerSmall {
+  display: block;
+  margin-right: 2px /* default vertical space */
 
+  }
   .line
   {
   display:block;
@@ -172,6 +178,13 @@ button.submit-btn:hover {
   font-weight: bold;
 
 }
+ .logo {
+  height: 50px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+}
 body, html {
   margin: 0;
   padding: 0;
@@ -181,7 +194,5 @@ body, html {
   .table-container {
     flex-direction: row;
   }
-
-
 
 

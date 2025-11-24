@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useLocation,useNavigate } from "react-router-dom";
-import PerformanceRating from "../pages/PerformanceRating";
-import Objective from "../pages/Objective";
-import AssessmentTable from "../pages/AssessmentTable";
-import logo from '../assets/logo.png';
-function AppraisalForm() {
+import { useLocation } from "react-router-dom";
+import PerformanceRating from "./PerformanceRating";
+import ManagerObjective from "./ManagerObjective";
+import ManagementObjective from "./ManagementObjective";
+import AssessmentTable from "./AssessmentTable";
+//import DownloadPDFWrapper from "../pages/DownloadPDFWrapper";
+
+function ManagementAppraisal() {
   const location = useLocation();
- const navigate = useNavigate();
+
   //const [appraisal, setAppraisal] = useState({});
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
@@ -55,6 +57,7 @@ function AppraisalForm() {
  
 
   return (
+    
     <div className="container">
       <h2>Employee Appraisal Form</h2>
 
@@ -62,7 +65,7 @@ function AppraisalForm() {
         <p>Loading employee...</p>
       ) : (
         <>
-<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
+       
           {/* ✅ EMPLOYEE DETAILS */}
           <form className="form-grid">
             <div className="form-group"><label>Name:</label><label>{employee.empName}</label></div>
@@ -82,24 +85,28 @@ function AppraisalForm() {
 
           <div className="line" />
           <div className="spacer" />
-
+           {/* <DownloadPDFWrapper fileName={`${employee.empName}_Appraisal_2024`}> */}
           {/* ✅ MAIN APPRAISAL FORM */}
           <form >
             <PerformanceRating/>
 
-            <Objective
+            <ManagementObjective
               objectives={gradeObjectives}
               grade={employee.grade}
               empId={employee.empID}
               goals={gradeGoals}
-              areas={areas}/>
+              areas={areas}
+                  previousRating={employee.previousYearRating}
+                
+              />
     </form>
-
+{/*  </DownloadPDFWrapper> */}
          
         </>
       )}
     </div>
+    
   );
 }
 
-export default AppraisalForm;
+export default ManagementAppraisal;

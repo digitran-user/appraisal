@@ -15,7 +15,16 @@ const empSchema = new mongoose.Schema({
       value: String,
       per:Number
       } 
+],
+   
+    aoas: [
+      {
+        key: String,
+        value: String
+      }
     ]
+
+
 
   
 });

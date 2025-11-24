@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation,useNavigate } from "react-router-dom";
-import PerformanceRating from "../pages/PerformanceRating";
-import Objective from "../pages/Objective";
-import AssessmentTable from "../pages/AssessmentTable";
-import logo from '../assets/logo.png';
-function AppraisalForm() {
+import { useLocation } from "react-router-dom";
+import PerformanceRating from "./PerformanceRating";
+import ManagerObjective from "./ManagerObjective";
+import AssessmentTable from "./AssessmentTable";
+
+function ReporteeAppraisal() {
   const location = useLocation();
- const navigate = useNavigate();
+
   //const [appraisal, setAppraisal] = useState({});
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
@@ -62,7 +62,6 @@ function AppraisalForm() {
         <p>Loading employee...</p>
       ) : (
         <>
-<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
           {/* ✅ EMPLOYEE DETAILS */}
           <form className="form-grid">
             <div className="form-group"><label>Name:</label><label>{employee.empName}</label></div>
@@ -78,6 +77,8 @@ function AppraisalForm() {
             <div className="form-group"><label>Assessment Type:</label><label>{employee.assessmentType}</label></div>
             <div className="form-group"><label>Manager/Appraiser:</label><label>{employee.reportsTo}</label></div>
             <div className="form-group"><label>Management/Appraiser:</label><label>{employee.management}</label></div>
+         
+          
           </form>
 
           <div className="line" />
@@ -86,14 +87,13 @@ function AppraisalForm() {
           {/* ✅ MAIN APPRAISAL FORM */}
           <form >
             <PerformanceRating/>
-
-            <Objective
+            <ManagerObjective
               objectives={gradeObjectives}
               grade={employee.grade}
               empId={employee.empID}
               goals={gradeGoals}
-              areas={areas}/>
-    </form>
+              areas={areas}
+              previousRating={employee.previousYearRating}/>    </form>
 
          
         </>
@@ -102,4 +102,4 @@ function AppraisalForm() {
   );
 }
 
-export default AppraisalForm;
+export default ReporteeAppraisal;
