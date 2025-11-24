@@ -111,11 +111,11 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
 
   const fetchAppraisal = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/selfAppraisal/${empId}`);
+      const response = await fetch(`http://13.203.205.146:5000/api/selfAppraisal/${empId}`);
       const resData = await response.json();
       if (resData) setSelfRating(resData);
 
-      const res = await fetch(`http://localhost:5000/api/managerAppraisal/${empId}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/managerAppraisal/${empId}`);
       const data = await res.json();
       if (data) {
         setReporteeAppraisal(data);
@@ -123,7 +123,7 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
         setOverallRating(data.overallRating || []);
       }
 
-      const resManagement = await fetch(`http://localhost:5000/api/managementAppraisal/${empId}`);
+      const resManagement = await fetch(`http://13.203.205.146:5000/api/managementAppraisal/${empId}`);
       const managementData = await resManagement.json();
       if (managementData) {
         setManagementAppraisal(managementData);
@@ -264,7 +264,9 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
   });
 };
 
-
+const handleBack = async (e) => {
+  navigate(`/landing?q=${employeeId}&z=self`);
+ }
   // --- Save data to backend --- //
   const handleSave = async (e) => {
     if (e) e.preventDefault();
@@ -301,12 +303,14 @@ function ManagementObjective({ objectives = [], goals = [], areas = [], empId })
   averageSelfRating: String(selfAverage || 0),
   averageManagerRating: String(managerAverage || 0),
   averageManagementRating: String(managementAverage || 0),
- averageOverallRating: String(averageOverallRating || 0)
+ averageOverallRating: String(averageOverallRating || 0),
+ overallComments: mgmtComments || ""
 
 };
+console.log("Saving payload:", payload);
 try {
   const response = await axios.post(
-    "http://localhost:5000/api/managementAppraisal",
+    "http://13.203.205.146:5000/api/managementAppraisal",
     payload,
     {
       headers: { "Content-Type": "application/json" },
@@ -325,7 +329,7 @@ try {
     alert("❌ Failed to send request. Check console.");
   }
 }
-const res = await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+const res = await axios.put(`http://13.203.205.146:5000/api/updateStatus/${employeeId}`, {
         status: "completed",
       });
 console.log(res.message);
@@ -591,7 +595,10 @@ navigate("/");
         <textarea
   style={{ border: "2px solid #4CAF50" }}
   value={mgmtComments || ""}
-  onChange={(e) => setMgmtComments(e.target.value)}
+  onChange={(e) => {
+    console.log("Overall comment typed:", e.target.value);
+    setMgmtComments(e.target.value);
+  }}
 />
         <div
           style={{
@@ -628,6 +635,26 @@ navigate("/");
           </span>
         </div>
 
+{/* 🔗 Management Summary Page Button */}
+{/* <div style={{ marginTop: "30px", marginBottom: "20px" }}>
+  <button
+    type="button"
+    onClick={() => navigate(`/management/summary/${employeeId}?q=${employeeId}&z=management`)}
+
+    style={{
+      background: "#6a5acd",
+      color: "white",
+      padding: "10px 20px",
+      borderRadius: "6px",
+      border: "none",
+      cursor: "pointer",
+      fontWeight: "bold",
+    }}
+  >
+    View Summary Page (Downloadable)
+  </button>
+</div> */}
+
         <div
           style={{
             marginTop: "20px",
@@ -638,6 +665,10 @@ navigate("/");
           { <button type="button" onClick={handleSave} className="submit-btn">
             Submit and Logout
           </button> }
+          <div className="spacerSmall" />
+           <button type="button" onClick={handleBack} className="submit-btn">
+            Back
+          </button>
         </div>
       </div>
     </div>

@@ -7,11 +7,10 @@ const SelfAppraisal = require("./models/SelfAppraisal");
 const ManagerAppraisal = require("./models/ManagerAppraisal");
 const ManagementAppraisal = require("./models/ManagementAppraisal");
 const objectiveRoutes = require("./routes/objectiveRoutes");
-//const appraisalRoutes = require( "./routes/appraisalRoutes.js");
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: 'http://13.203.205.146:3000' }));
 
 // ✅ Connect to MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/empDetails", {
@@ -21,7 +20,7 @@ mongoose.connect("mongodb://127.0.0.1:27017/empDetails", {
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.log(err));
 
- // import objectiveRoutes from "./routes/objectiveRoutes.js";
+// import objectiveRoutes from "./routes/objectiveRoutes.js";
 app.use("/api/objectives", objectiveRoutes);
 
 //app.use("/api/appraisal", appraisalRoutes);
@@ -270,4 +269,4 @@ app.put("/api/updateStatus/:empId", async (req, res) => {
   }
 });
 
-app.listen(5000, () => console.log("🚀 Server running on port 5000"));
+app.listen(5000,'0.0.0.0', () => console.log("🚀 Server running on port 5000"));

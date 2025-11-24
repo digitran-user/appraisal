@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from '../assets/logo.png';
 const EmployeeList = () => {
   const navigate = useNavigate();
   const [employee, setEmployee] = useState([]); // Fix: use [] instead of null
 
   const fetchEmployee = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/employees`);
+      const res = await fetch(`http://13.203.205.146:5000/api/employees`);
       const data = await res.json();
 
       const excludedGrades = ["DIR", "BS5"];
@@ -31,6 +31,8 @@ const EmployeeList = () => {
   };
 
   return (
+<>
+<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
     <div style={{ padding: "20px" }}>
       <h2>Employee List</h2>
       <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -42,6 +44,7 @@ const EmployeeList = () => {
             <th>Designation</th>
             <th>Grade</th>
             <th>Department</th>
+            <th>Summary</th>
           </tr>
         </thead>
         <tbody>
@@ -72,11 +75,42 @@ const EmployeeList = () => {
               <td>{emp.designation}</td>
               <td>{emp.grade}</td>
               <td>{emp.department}</td>
+             <td>
+  {emp.status === "completed" ? (
+    <button
+      onClick={() =>
+        navigate(`/management/summary/${emp.empID}?q=${emp.empID}&z=management`)
+      }
+      style={{
+        background: "#6a5acd",
+        color: "white",
+        padding: "6px 12px",
+        borderRadius: "6px",
+        border: "none",
+        cursor: "pointer",
+        fontSize: "12px",
+        fontWeight: "bold",
+      }}
+    >
+      View Summary
+    </button>
+  ) : (
+    <span style={{ color: "#999" }}>—</span>
+  )}
+</td>
+
+
             </tr>
           ))}
         </tbody>
       </table>
-    </div>
+      <h2>
+         <button type="button" onClick={() => navigate(`/`)} className="submit-btn">
+            LogOut  
+          </button>
+          </h2>
+    </div> </>
+        
   );
 };
 

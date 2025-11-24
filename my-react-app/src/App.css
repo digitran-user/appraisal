@@ -178,6 +178,13 @@ button.submit-btn:hover {
   font-weight: bold;
 
 }
+ .logo {
+  height: 50px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+}
 body, html {
   margin: 0;
   padding: 0;

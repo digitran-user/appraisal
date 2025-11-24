@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import logo from '../assets/logo.png';
 function Home() {
   const [email, setEmail] = useState("");
   const [employee,setEmployee] = useState("");
@@ -13,14 +13,17 @@ function Home() {
   const handleSubmit = async(e) => {
     e.preventDefault();
 
-     const res = await fetch(`http://localhost:5000/api/emp/${password}`);
+     const res = await fetch(`http://13.203.205.146:5000/api/emp/${email}`);
      const data = await res.json();
+     const correcPassword = data.empID + data.doj;
+     //debugger;
      if(res.status === 404){
        setError(data.message);
+     }if(correcPassword === password){
+        navigate(`/landing?q=${email}&z=self`);
      }else{
-        navigate(`/landing?q=${password}&z=self`);
+        setError("Incorrect credentials");
      }
-   
    
   };
 const styles = {
@@ -52,6 +55,8 @@ const styles = {
 
 
   return (
+<>
+<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
     <div style={styles.container}>
       <h2>Complete your Appraisal</h2>
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -71,7 +76,7 @@ const styles = {
         <button type="submit" style={styles.button}>Login</button>
       </form>
       {error && <div style={{color:"red", marginTop:"10px"}}>{error}</div>}
-    </div>
+    </div> </>
   );
   
 }

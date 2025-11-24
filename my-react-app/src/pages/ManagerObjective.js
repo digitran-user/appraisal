@@ -30,7 +30,7 @@ function ManagerObjective({
   const fetchAppraisal = async () => {
     try {
       const resAppraisal = await fetch(
-        `http://localhost:5000/api/selfAppraisal/${empId}`
+        `http://13.203.205.146:5000/api/selfAppraisal/${empId}`
 
       );
      // debugger;
@@ -41,7 +41,7 @@ function ManagerObjective({
       console.log(resData);
       // Use template literal to insert empId
       const res = await fetch(
-        `http://localhost:5000/api/managerAppraisal/${empId}`
+        `http://13.203.205.146:5000/api/managerAppraisal/${empId}`
       );
       const data = await res.json();
       
@@ -108,6 +108,9 @@ function ManagerObjective({
   const handleComment = (value) => {
     setComments(value);
   };
+  const handleBack = async (e) => {
+  navigate(`/landing?q=${employeeId}&z=self`);
+ }
   const handleChange = (index, key, value, section) => {
     //debugger
     if (value != "" && section === "managerGoals") {
@@ -164,10 +167,7 @@ function ManagerObjective({
     setManagerAverage(calculateAverageManager(reporteeappraisal.managerGoals));
   };
 
-  const handleBack = async (e) => {
-    e.preventDefault();
-    navigate(`/appraisal?q=${empId}&z=self`);
-  }
+
   // Save to backend
   const handleSave = async (e) => {
     //console.log(reporteeappraisal);
@@ -200,7 +200,7 @@ function ManagerObjective({
         comments: comments,
       };
      // alert(JSON.stringify(payload));
-      await axios.post("http://localhost:5000/api/managerAppraisal", payload);
+      await axios.post("http://13.203.205.146:5000/api/managerAppraisal", payload);
       alert("✅ Appraisal saved successfully!");
       e.preventDefault();
     } catch (err) {
@@ -208,7 +208,7 @@ function ManagerObjective({
       alert("❌ Failed to save appraisal");
     }
 
-   const res =  await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+   const res =  await axios.put(`http://13.203.205.146:5000/api/updateStatus/${employeeId}`, {
         status: "with management",
       });
     console.log(res.message);
@@ -581,6 +581,10 @@ function ManagerObjective({
         >
           <button type="button" onClick={handleSave} className="submit-btn">
             Submit and Logout
+          </button>
+           <div className="spacerSmall" />
+           <button type="button" onClick={handleBack} className="submit-btn">
+            Back
           </button>
         </div>
       </div>
