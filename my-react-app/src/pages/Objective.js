@@ -19,7 +19,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
     try {
       // Use template literal to insert empId
       const res = await fetch(
-        `http://localhost:5000/api/selfAppraisal/${empId}`
+        `http://13.203.205.146:5000/api/selfAppraisal/${empId}`
       );
       const data = await res.json();
       if (data) {
@@ -98,9 +98,7 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
       return;
     }
   }
-
-  
-
+ 
   // --- 3) validate checkbox ---
   const agreementEl = document.getElementsByName("agreement")[0];
   if (!agreementEl || !agreementEl.checked) {
@@ -119,21 +117,23 @@ function Objective({ objectives = [], goals = [], areas = [], empId }) {
     };
 
     console.log("Saving payload:", payload);
-    await axios.post("http://localhost:5000/api/selfAppraisal", payload);
+    await axios.post("http://13.203.205.146:5000/api/selfAppraisal", payload);
     alert("✅ Appraisal saved successfully!");
   } catch (err) {
     console.error("Error saving appraisal:", err);
     alert("❌ Failed to save appraisal");
   }
-  debugger;
-  const response = await axios.put(`http://localhost:5000/api/updateStatus/${employeeId}`, {
+  //debugger;
+  const response = await axios.put(`http://13.203.205.146:5000/api/updateStatus/${employeeId}`, {
         status: "with manager",
       });
       console.log(response.message);
 
 navigate("/");
 };
-
+const handleBack = async (e) => {
+  navigate(`/landing?q=${employeeId}&z=self`);
+ }
 
   if (loading) return <p>Loading...</p>;
   if (!appraisal) return <p>No data found.</p>;
@@ -327,6 +327,10 @@ type="number"
         >
           <button type="button" onClick={handleSave} className="submit-btn">
             Submit and Logout
+          </button>
+          <div className="spacerSmall" />
+           <button type="button" onClick={handleBack} className="submit-btn">
+            Back
           </button>
         </div>
       </div>

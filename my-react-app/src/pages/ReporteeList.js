@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import logo from '../assets/logo.png';
 
 const ReporteeList = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const ReporteeList = () => {
       if (!selfID) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/emp/${selfID}`);
+        const res = await fetch(`http://13.203.205.146:5000/api/emp/${selfID}`);
         const data = await res.json();
         setManager(data);
       } catch (err) {
@@ -48,7 +49,9 @@ const ReporteeList = () => {
         <p>Loading employee...</p>
       ) : (
         <>
+<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
           {/* ✅ EMPLOYEE DETAILS */}
+<h2>Reportees List</h2>
           <form className="form-grid">
             <div className="form-group"><label>Name:</label><label>{manager.empName}</label></div>
             <div className="form-group"><label>Employee ID:</label><label>{manager.empID}</label></div>
@@ -77,7 +80,7 @@ const ReporteeList = () => {
 
        <div className="spacer" />
       {/* REPORTTEE TABLE */}
-       <h2>Reportees List</h2>
+       
       <table border="1" cellPadding="10" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
@@ -128,6 +131,9 @@ const ReporteeList = () => {
         <button className="submit-btn" onClick={() => navigate(`/appraisal?q=${selfID}&z=self`)}>
           Self Appraisal
         </button>
+           <button onClick={() => navigate(`/landing?q=${selfID}&z=self`)} className="submit-btn">
+            Back  
+          </button>
       </h2>
     </div>
   );

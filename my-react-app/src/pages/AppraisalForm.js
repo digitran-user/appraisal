@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import PerformanceRating from "../pages/PerformanceRating";
 import Objective from "../pages/Objective";
 import AssessmentTable from "../pages/AssessmentTable";
-
+import logo from '../assets/logo.png';
 function AppraisalForm() {
   const location = useLocation();
-
+ const navigate = useNavigate();
   //const [appraisal, setAppraisal] = useState({});
   const [employee, setEmployee] = useState(null);
   const [gradeObjectives, setGradeObjectives] = useState([]);
@@ -19,7 +19,7 @@ function AppraisalForm() {
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/emp/${empId}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/emp/${empId}`);
       const data = await res.json();
       setEmployee(data);
       fetchObjectives(data.grade);
@@ -31,7 +31,7 @@ function AppraisalForm() {
   // ✅ Fetch objectives by grade
   const fetchObjectives = async (grade) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/objectives/${grade}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/objectives/${grade}`);
       const objData = await res.json();
       setGradeObjectives(objData?.objectives || []);
       setGradeGoals(objData?.goals || []);
@@ -62,6 +62,7 @@ function AppraisalForm() {
         <p>Loading employee...</p>
       ) : (
         <>
+<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
           {/* ✅ EMPLOYEE DETAILS */}
           <form className="form-grid">
             <div className="form-group"><label>Name:</label><label>{employee.empName}</label></div>

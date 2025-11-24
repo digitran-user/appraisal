@@ -3,6 +3,7 @@ import { useLocation,useNavigate } from "react-router-dom";
 import PerformanceRating from "./PerformanceRating";
 import Objective from "./Objective";
 import AssessmentTable from "./AssessmentTable";
+import logo from '../assets/logo.png';
 
 function LandingPage() {
   const location = useLocation();
@@ -53,11 +54,13 @@ const navigateToEmployees = async () => {
 navigate(`/employeeList`);
 };
 
-
+const navigateToHome = async () => {
+navigate(`/`);
+};
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/emp/${empId}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/emp/${empId}`);
       const data = await res.json();
       setEmployee(data);
       if(data.grade==="BS5" || data.grade=== "DIR"){
@@ -68,7 +71,7 @@ navigate(`/employeeList`);
       console.error("Error fetching employee:", err);
     }
 
-    const res = await fetch(`http://localhost:5000/api/reportees/${empId}`);
+    const res = await fetch(`http://13.203.205.146:5000/api/reportees/${empId}`);
     const data = await res.json();
     localStorage.setItem("employees", JSON.stringify(data));
      if (res.status===404) {
@@ -95,6 +98,8 @@ navigate(`/employeeList`);
  
 
   return (
+<>
+<img src={logo} alt="Logo" className="logo" onClick={() => navigate('/')} />
     <div className="container">
       <h2>Employee Appraisal Form</h2>
 
@@ -124,10 +129,12 @@ navigate(`/employeeList`);
           {showButton && (<button  onClick={navigateToReportee} type="submit" style={styles.button}>Reportee List</button>)} </>
             <div className="spacerSmall" />
            <button  onClick={navigateToAppraisal} type="submit" style={styles.button}>Appraisal Form</button>
-         </div>
+         <div className="spacerSmall" />
+           <button  onClick={navigateToHome} type="submit" style={styles.button}>Logout</button>
+        </div>
         </>
       )}
-    </div>
+    </div> </>
   );
 }
 

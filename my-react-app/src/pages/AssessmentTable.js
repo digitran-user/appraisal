@@ -7,7 +7,7 @@ const AssessmentTable = ({ grade, isManager, appraisal,savedAppraisal, setApprai
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/objectives/${grade}`);
+        const response = await fetch(`http://13.203.205.146:5000/api/objectives/${grade}`);
         const data = await response.json();
         if (data && data.aoas) {
           setAreas(data.aoas.map(item => item.value));

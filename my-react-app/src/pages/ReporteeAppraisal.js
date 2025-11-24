@@ -19,7 +19,7 @@ function ReporteeAppraisal() {
   // ✅ Fetch employee
   const fetchEmployee = async (empId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/emp/${empId}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/emp/${empId}`);
       const data = await res.json();
       setEmployee(data);
       fetchObjectives(data.grade);
@@ -31,7 +31,7 @@ function ReporteeAppraisal() {
   // ✅ Fetch objectives by grade
   const fetchObjectives = async (grade) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/objectives/${grade}`);
+      const res = await fetch(`http://13.203.205.146:5000/api/objectives/${grade}`);
       const objData = await res.json();
       setGradeObjectives(objData?.objectives || []);
       setGradeGoals(objData?.goals || []);

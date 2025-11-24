@@ -10,6 +10,8 @@ import EmployeeList from "./pages/EmployeeList";
 import AppraisalForm from "./pages/AppraisalForm";
 import ReporteeAppraisal from "./pages/ReporteeAppraisal";
 import ManagementAppraisal from "./pages/ManagementAppraisal";
+import ManagementSummaryPage from "./pages/ManagementSummaryPage";
+
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -25,6 +27,10 @@ function App() {
         <Route path="/reporteeappraisal" element={<ReporteeAppraisal />} />
          <Route path="/managementappraisal" element={<ManagementAppraisal />} />
         <Route path="/reportee" element={<ReporteeList />} />
+        <Route path="/management/summary/:empId" element={<ManagementSummaryPage />} 
+
+/>
+
       </Routes>
   </>
   );
